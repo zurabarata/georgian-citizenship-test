@@ -47,7 +47,12 @@ export const Results = () => {
 
   // If no results data, redirect to home
   if (!location.state) {
-    history.replace('/');
+    try {
+      history.push('/');
+    } catch (error) {
+      console.error('Redirect error:', error);
+      window.location.href = '/';
+    }
     return null;
   }
 
@@ -61,7 +66,13 @@ export const Results = () => {
 
   const handleGoHome = () => {
     console.log('Back to Home button clicked'); // Debug log
-    history.replace('/');
+    try {
+      history.push('/');
+    } catch (error) {
+      console.error('Navigation error:', error);
+      // Fallback: try to navigate using window.location
+      window.location.href = '/';
+    }
   };
 
   const getScoreColor = () => {
@@ -180,10 +191,7 @@ export const Results = () => {
             <IonButton 
               expand="block"
               fill="outline"
-              onClick={() => {
-                console.log('Button clicked directly');
-                handleGoHome();
-              }}
+              onClick={handleGoHome}
             >
               <IonIcon icon={homeOutline} slot="start" />
               Back to Home
