@@ -21,7 +21,7 @@ export interface TestCategory {
 export const testCategories: TestCategory[] = [
   {
     id: 'georgian',
-    title: 'ქართული ენა — მოქალაქეობის ტესტი',
+    title: 'ქართული ენა',
     titleEnglish: 'Georgian Language',
     description: 'Test your knowledge of Georgian language and grammar',
     questions: [
@@ -139,7 +139,7 @@ export const testCategories: TestCategory[] = [
   },
   {
     "id": "history",
-    "title": "საქართველოს ისტორია — მოქალაქეობის ტესტი",
+    "title": "საქართველოს ისტორია",
     "titleEnglish": "Georgian History",
     "description": "Learn about Georgia's rich historical heritage",
     "questions": [
@@ -4747,7 +4747,7 @@ export const testCategories: TestCategory[] = [
   },
   {
     id: 'law',
-    title: 'საქართველოს კანონმდებლობა — მოქალაქეობის ტესტი',
+    title: 'საქართველოს კანონმდებლობა',
     titleEnglish: 'Georgian Law',
     description: 'Understand Georgia\'s legal system and constitution',
     questions: [
