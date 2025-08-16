@@ -91,6 +91,43 @@ export const Study = () => {
     }
   };
 
+  const handleCompleteStudy = () => {
+    // Save final progress
+    progressManager.saveStudyProgress({
+      categoryId,
+      correctAnswers,
+      totalAnswered,
+      lastQuestionIndex: questions.length - 1
+    });
+    
+    // Navigate to home
+    window.location.href = '/';
+  };
+
+  const handleStartTest = () => {
+    // Clear any existing test progress for this category
+    progressManager.clearTestProgress(categoryId);
+    // Navigate to test
+    window.location.href = `/test/${categoryId}`;
+  };
+
+  const handleRestartStudy = () => {
+    // Reset study progress
+    setCurrentQuestionIndex(0);
+    setSelectedAnswer(null);
+    setShowAnswer(false);
+    setCorrectAnswers(0);
+    setTotalAnswered(0);
+    
+    // Clear saved progress
+    progressManager.saveStudyProgress({
+      categoryId,
+      correctAnswers: 0,
+      totalAnswered: 0,
+      lastQuestionIndex: 0
+    });
+  };
+
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
@@ -106,6 +143,7 @@ export const Study = () => {
   const currentQuestion = questions[currentQuestionIndex];
   const progress = (currentQuestionIndex + 1) / questions.length;
   const accuracy = totalAnswered > 0 ? Math.round((correctAnswers / totalAnswered) * 100) : 0;
+  const isCompleted = currentQuestionIndex === questions.length - 1 && showAnswer;
 
   if (!currentQuestion || !category) {
     return (
@@ -244,7 +282,7 @@ export const Study = () => {
               onClick={handleNext}
               disabled={currentQuestionIndex === questions.length - 1}
             >
-              Next
+              {currentQuestionIndex === questions.length - 1 ? 'Complete' : 'Next'}
               <IonIcon icon={chevronForwardOutline} slot="end" />
             </IonButton>
           </div>
@@ -285,6 +323,68 @@ export const Study = () => {
               />
             ))}
           </div>
+
+          {/* Completion Screen */}
+          {isCompleted && (
+            <IonCard style={{ marginTop: '24px' }}>
+              <IonCardHeader>
+                <IonCardTitle style={{ textAlign: 'center' }}>
+                  🎉 Study Session Complete!
+                </IonCardTitle>
+              </IonCardHeader>
+              <IonCardContent>
+                <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                  <IonText>
+                    <h3>Your Study Results:</h3>
+                    <p>
+                      <strong>Questions Answered:</strong> {totalAnswered}<br />
+                      <strong>Correct Answers:</strong> {correctAnswers}<br />
+                      <strong>Accuracy:</strong> {accuracy}%
+                    </p>
+                  </IonText>
+                </div>
+
+                <div style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: '12px'
+                }}>
+                  <IonButton 
+                    expand="block"
+                    onClick={handleStartTest}
+                    color="success"
+                  >
+                    🧪 Take the Actual Test
+                  </IonButton>
+
+                  <IonButton 
+                    expand="block"
+                    fill="outline"
+                    onClick={handleRestartStudy}
+                  >
+                    🔄 Restart Study Session
+                  </IonButton>
+
+                  <IonButton 
+                    expand="block"
+                    fill="outline"
+                    onClick={handleCompleteStudy}
+                  >
+                    🏠 Back to Home
+                  </IonButton>
+                </div>
+
+                <div style={{ marginTop: '16px', textAlign: 'center' }}>
+                  <IonText color="medium">
+                    <p>
+                      <strong>Ready for the test?</strong><br />
+                      You need to answer at least 7 out of 10 questions correctly to pass.
+                    </p>
+                  </IonText>
+                </div>
+              </IonCardContent>
+            </IonCard>
+          )}
 
           <div style={{ marginTop: '24px', textAlign: 'center' }}>
             <IonText color="medium">
