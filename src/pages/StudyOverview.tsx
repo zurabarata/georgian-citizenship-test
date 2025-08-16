@@ -29,29 +29,39 @@ import {
 } from 'ionicons/icons';
 import { useHistory } from 'react-router';
 import { testCategories } from '../data/questions';
-import { progressManager } from '../utils/progressManager';
+import { progressManager, type StudyProgress } from '../utils/progressManager';
+
+type CategoryId = 'georgian' | 'history' | 'law';
 
 export const StudyOverview = () => {
   const history = useHistory();
-  const [studyProgress, setStudyProgress] = useState<any>({});
+  const [studyProgress, setStudyProgress] = useState<Record<CategoryId, StudyProgress | null>>({
+    georgian: null,
+    history: null,
+    law: null
+  });
 
   useEffect(() => {
     loadStudyProgress();
   }, []);
 
   const loadStudyProgress = () => {
-    const progress: any = {};
-    testCategories.forEach(category => {
-      progress[category.id] = progressManager.getStudyProgress(category.id);
-    });
+    const progress: Record<CategoryId, StudyProgress | null> = {
+      georgian: null,
+      history: null,
+      law: null
+    };
+    for (const category of testCategories) {
+      progress[category.id as CategoryId] = progressManager.getStudyProgress(category.id) as StudyProgress | null;
+    }
     setStudyProgress(progress);
   };
 
-  const handleStartStudy = (categoryId: string) => {
+  const handleStartStudy = (categoryId: CategoryId) => {
     history.push(`/study/${categoryId}`);
   };
 
-  const getCategoryIcon = (categoryId: string) => {
+  const getCategoryIcon = (categoryId: CategoryId) => {
     switch (categoryId) {
       case 'georgian':
         return languageOutline;
@@ -64,20 +74,35 @@ export const StudyOverview = () => {
     }
   };
 
-  const getStudyProgress = (categoryId: string) => {
+  const getStudyProgress = (categoryId: CategoryId) => {
     const progress = studyProgress[categoryId];
-    if (!progress || progress.totalAnswered === 0) return 0;
-    return Math.round((progress.correctAnswers / progress.totalAnswered) * 100);
+    if (!progress || !progress.answers) return 0;
+    
+    // Calculate unique questions answered (non-empty answers)
+    const uniqueAnswered = progress.answers.filter((answer: string) => answer !== undefined && answer !== null && answer !== '').length;
+    const category = testCategories.find(c => c.id === categoryId);
+    if (!category) return 0;
+    
+    return Math.round((uniqueAnswered / category.questions.length) * 100);
   };
 
-  const getStudyStatus = (categoryId: string) => {
+  const getStudyStatus = (categoryId: CategoryId) => {
     const progress = studyProgress[categoryId];
-    if (!progress || progress.totalAnswered === 0) return 'Not Started';
+    if (!progress || !progress.answers) return 'Not Started';
+    
     const category = testCategories.find(c => c.id === categoryId);
-    if (category && progress.totalAnswered >= category.questions.length) {
+    if (!category) return 'Not Started';
+    
+    // Calculate unique questions answered
+    const uniqueAnswered = progress.answers.filter((answer: string) => answer !== undefined && answer !== null && answer !== '').length;
+    
+    if (uniqueAnswered >= category.questions.length) {
       return 'Completed';
     }
-    return 'In Progress';
+    if (uniqueAnswered > 0) {
+      return 'In Progress';
+    }
+    return 'Not Started';
   };
 
   return (
@@ -86,70 +111,74 @@ export const StudyOverview = () => {
         <IonToolbar>
           <IonTitle>📚 Study Mode</IonTitle>
         </IonToolbar>
-      </IonHeader>
+      </IonHeader> 
 
       <IonContent fullscreen>
-        <div style={{ padding: '16px' }}>
-          <IonText color="medium">
-            <h2 style={{ textAlign: 'center', marginBottom: '24px' }}>
-              Choose a Category to Study
-            </h2>
-            <p style={{ textAlign: 'center', marginBottom: '32px' }}>
-              Practice with all questions in each category. See correct answers and explanations to improve your knowledge.
-            </p>
-          </IonText>
-
-          <IonGrid>
+        <div style={{ padding: '4px' }}>
+          <IonGrid style={{ padding: '0' }}>
             <IonRow>
               {testCategories.map((category) => {
-                const progress = getStudyProgress(category.id);
-                const status = getStudyStatus(category.id);
+                const progress = getStudyProgress(category.id as CategoryId);
+                const status = getStudyStatus(category.id as CategoryId);
                 
                 return (
-                  <IonCol size="12" sizeMd="6" sizeLg="4" key={category.id}>
-                    <IonCard style={{ height: '100%', margin: '8px 0' }}>
-                      <IonCardHeader>
-                        <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+                  <IonCol size="12" sizeMd="4" key={category.id}>
+                    <IonCard style={{ height: '100%', margin: '2px 0' }}>
+                      <IonCardHeader style={{ padding: '8px' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '4px' }}>
                           <IonIcon 
-                            icon={getCategoryIcon(category.id)} 
-                            style={{ fontSize: '48px', color: 'var(--ion-color-primary)' }}
+                            icon={getCategoryIcon(category.id as CategoryId)} 
+                            style={{ fontSize: '28px', color: 'var(--ion-color-primary)' }}
                           />
                         </div>
-                        <IonCardTitle style={{ textAlign: 'center', fontSize: '1.2em' }}>
+                        <IonCardTitle style={{ textAlign: 'center', fontSize: '0.9em', margin: '0' }}>
                           {category.titleEnglish}
                         </IonCardTitle>
-                        <IonCardSubtitle style={{ textAlign: 'center' }}>
+                        <IonCardSubtitle style={{ textAlign: 'center', margin: '2px 0 0 0', fontSize: '0.8em' }}>
                           {category.title}
                         </IonCardSubtitle>
                       </IonCardHeader>
-                      <IonCardContent>
-                        <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+                      <IonCardContent style={{ padding: '8px' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '4px' }}>
                           <IonText color="medium">
-                            <p>{category.description}</p>
-                            <p><strong>{category.questions.length} questions available</strong></p>
+                            <p style={{ margin: '0', fontSize: '0.8em' }}><strong>{category.questions.length} questions</strong></p>
                           </IonText>
                         </div>
 
                         {/* Progress Display */}
-                        {studyProgress[category.id] && studyProgress[category.id].totalAnswered > 0 && (
-                          <div style={{ marginBottom: '16px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                              <IonText color="medium">Progress</IonText>
-                              <IonText color="primary">{progress}%</IonText>
-                            </div>
-                            <IonProgressBar value={progress / 100} color="primary" />
-                            <div style={{ marginTop: '8px', textAlign: 'center' }}>
-                              <IonBadge color="primary">
-                                {studyProgress[category.id].correctAnswers} / {studyProgress[category.id].totalAnswered} correct
-                              </IonBadge>
-                            </div>
-                          </div>
-                        )}
+                        {studyProgress[category.id as CategoryId]?.answers && (() => {
+                          const progress = studyProgress[category.id as CategoryId];
+                          if (!progress) return null;
+                          
+                          const uniqueAnswered = progress.answers.filter((answer: string) => answer !== undefined && answer !== null && answer !== '').length;
+                          const correctAnswers = progress.answers.filter((answer: string, index: number) => answer === category.questions[index]?.answer).length;
+                          return uniqueAnswered > 0 ? (
+                              <div style={{ marginBottom: '6px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
+                                  <IonText color="medium" style={{ fontSize: '0.7em' }}>Progress</IonText>
+                                  <IonText color="primary" style={{ fontSize: '0.7em' }}>{Math.round((uniqueAnswered / category.questions.length) * 100)}%</IonText>
+                                </div>
+                                <IonProgressBar value={uniqueAnswered / category.questions.length} color="primary" />
+                                <div style={{ marginTop: '2px', textAlign: 'center' }}>
+                                  <IonBadge color="primary" style={{ fontSize: '0.6em' }}>
+                                    {uniqueAnswered}/{category.questions.length}
+                                  </IonBadge>
+                                </div>
+                                <div style={{ marginTop: '1px', textAlign: 'center' }}>
+                                  <IonBadge color="success" style={{ fontSize: '0.6em' }}>
+                                    {correctAnswers} correct 
+                                  </IonBadge>
+                                </div>
+                              </div>
+                            ) : null;
+                          })()
+                        }
 
                         {/* Status Badge */}
-                        <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '8px' }}>
                           <IonBadge 
                             color={status === 'Completed' ? 'success' : status === 'In Progress' ? 'primary' : 'medium'}
+                            style={{ fontSize: '0.7em' }}
                           >
                             {status}
                           </IonBadge>
@@ -157,11 +186,12 @@ export const StudyOverview = () => {
 
                         <IonButton 
                           expand="block"
-                          onClick={() => handleStartStudy(category.id)}
+                          size="small"
+                          onClick={() => handleStartStudy(category.id as CategoryId)}
                           color={status === 'Completed' ? 'success' : 'primary'}
                         >
                           <IonIcon icon={status === 'Completed' ? checkmarkCircleOutline : playOutline} slot="start" />
-                          {status === 'Completed' ? 'Review Again' : 'Start Studying'}
+                          {status === 'Completed' ? 'Review' : 'Start'}
                         </IonButton>
                       </IonCardContent>
                     </IonCard>

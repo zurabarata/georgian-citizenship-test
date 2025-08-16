@@ -101,23 +101,14 @@ export const TestOverview = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
+        <IonToolbar> 
           <IonTitle>🧪 Test Mode</IonTitle>
         </IonToolbar>
       </IonHeader>
 
       <IonContent fullscreen>
-        <div style={{ padding: '16px' }}>
-          <IonText color="medium">
-            <h2 style={{ textAlign: 'center', marginBottom: '24px' }}>
-              Choose a Category to Test
-            </h2>
-            <p style={{ textAlign: 'center', marginBottom: '32px' }}>
-              Take a 10-question test for each category. You need to score at least 7 out of 10 to pass.
-            </p>
-          </IonText>
-
-          <IonGrid>
+        <div style={{ padding: '4px' }}>
+          <IonGrid style={{ padding: '0' }}>
             <IonRow>
               {testCategories.map((category) => {
                 const status = getTestStatus(category.id);
@@ -125,40 +116,40 @@ export const TestOverview = () => {
                 const hasIncompleteTest = progressManager.hasIncompleteTest(category.id);
                 
                 return (
-                  <IonCol size="12" sizeMd="6" sizeLg="4" key={category.id}>
-                    <IonCard style={{ height: '100%', margin: '8px 0' }}>
-                      <IonCardHeader>
-                        <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+                  <IonCol size="12" sizeMd="4" key={category.id}>
+                    <IonCard style={{ height: '100%', margin: '2px 0' }}>
+                      <IonCardHeader style={{ padding: '8px' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '4px' }}>
                           <IonIcon 
                             icon={getCategoryIcon(category.id)} 
-                            style={{ fontSize: '48px', color: 'var(--ion-color-primary)' }}
+                            style={{ fontSize: '28px', color: 'var(--ion-color-primary)' }}
                           />
                         </div>
-                        <IonCardTitle style={{ textAlign: 'center', fontSize: '1.2em' }}>
+                        <IonCardTitle style={{ textAlign: 'center', fontSize: '0.9em', margin: '0' }}>
                           {category.titleEnglish}
                         </IonCardTitle>
-                        <IonCardSubtitle style={{ textAlign: 'center' }}>
+                        <IonCardSubtitle style={{ textAlign: 'center', margin: '2px 0 0 0', fontSize: '0.8em' }}>
                           {category.title}
                         </IonCardSubtitle>
                       </IonCardHeader>
-                      <IonCardContent>
-                        <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-                          <IonText color="medium">
-                            <p>10 questions • 7+ to pass</p>
-                            {score !== null && (
-                              <p><strong>Last Score: {score}/10</strong></p>
-                            )}
-                          </IonText>
-                        </div>
+                      <IonCardContent style={{ padding: '8px' }}>
+                        {score !== null && (
+                          <div style={{ textAlign: 'center', marginBottom: '4px' }}>
+                            <IonText color="medium">
+                              <p style={{ margin: '0', fontSize: '0.8em' }}><strong>Score: {score}/10</strong></p>
+                            </IonText>
+                          </div>
+                        )}
 
                         {/* Status Badge */}
-                        <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '8px' }}>
                           <IonBadge 
                             color={
                               status === 'Passed' ? 'success' : 
                               status === 'Failed' ? 'danger' : 
                               status === 'In Progress' ? 'warning' : 'medium'
                             }
+                            style={{ fontSize: '0.7em' }}
                           >
                             {status}
                           </IonBadge>
@@ -166,6 +157,7 @@ export const TestOverview = () => {
 
                         <IonButton 
                           expand="block"
+                          size="small"
                           onClick={() => handleStartTest(category.id)}
                           color={
                             status === 'Passed' ? 'success' : 
@@ -179,8 +171,8 @@ export const TestOverview = () => {
                             } 
                             slot="start" 
                           />
-                          {status === 'Passed' ? 'Retake Test' : 
-                           status === 'In Progress' ? 'Resume Test' : 'Start Test'}
+                          {status === 'Passed' ? 'Retake' : 
+                           status === 'In Progress' ? 'Resume' : 'Start'}
                         </IonButton>
                       </IonCardContent>
                     </IonCard>

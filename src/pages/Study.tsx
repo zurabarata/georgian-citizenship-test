@@ -22,6 +22,10 @@ import {
   IonBadge,
   IonChip,
   IonList,
+  IonSearchbar,
+  IonModal,
+  IonFab,
+  IonFabButton,
 } from '@ionic/react';
 import { 
   chevronForwardOutline, 
@@ -29,7 +33,9 @@ import {
   checkmarkCircleOutline,
   closeCircleOutline,
   schoolOutline,
-  informationCircleOutline
+  informationCircleOutline,
+  listOutline,
+  searchOutline
 } from 'ionicons/icons';
 import { useParams, useHistory } from 'react-router';
 import { testCategories, type Question } from '../data/questions';
@@ -43,6 +49,8 @@ export const Study = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
   const [userAnswers, setUserAnswers] = useState<string[]>([]);
+  const [showQuestionList, setShowQuestionList] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     if (categoryId) {
@@ -81,13 +89,13 @@ export const Study = () => {
     const correctAnswers = newUserAnswers.filter((answer, index) => 
       answer === questions[index]?.answer
     ).length;
-    const totalAnswered = newUserAnswers.filter(answer => answer !== undefined && answer !== null).length;
+    const uniqueAnswered = newUserAnswers.filter(answer => answer !== undefined && answer !== null && answer !== '').length;
     
     // Save study progress
     progressManager.saveStudyProgress({
       categoryId,
       correctAnswers,
-      totalAnswered,
+      totalAnswered: uniqueAnswered,
       lastQuestionIndex: currentQuestionIndex,
       answers: newUserAnswers
     });
@@ -106,13 +114,13 @@ export const Study = () => {
     const correctAnswers = userAnswers.filter((answer, index) => 
       answer === questions[index]?.answer
     ).length;
-    const totalAnswered = userAnswers.filter(answer => answer !== undefined && answer !== null).length;
+    const uniqueAnswered = userAnswers.filter(answer => answer !== undefined && answer !== null && answer !== '').length;
     
     // Save final progress
     progressManager.saveStudyProgress({
       categoryId,
       correctAnswers,
-      totalAnswered,
+      totalAnswered: uniqueAnswered,
       lastQuestionIndex: questions.length - 1,
       answers: userAnswers
     });
@@ -157,6 +165,23 @@ export const Study = () => {
     setShowAnswer(true);
   };
 
+  const handleQuestionSelect = (index: number) => {
+    setCurrentQuestionIndex(index);
+    setSelectedAnswer(null);
+    setShowAnswer(false);
+    setShowQuestionList(false);
+  };
+
+  const filteredQuestions = questions.filter((question, index) => {
+    if (!searchTerm) return true;
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      question.stem.toLowerCase().includes(searchLower) ||
+      question.options.some(option => option.text.toLowerCase().includes(searchLower)) ||
+      `Question ${index + 1}`.toLowerCase().includes(searchLower)
+    );
+  });
+
   const currentQuestion = questions[currentQuestionIndex];
   const progress = (currentQuestionIndex + 1) / questions.length;
   
@@ -164,8 +189,8 @@ export const Study = () => {
   const correctAnswers = userAnswers.filter((answer, index) => 
     answer === questions[index]?.answer
   ).length;
-  const totalAnswered = userAnswers.filter(answer => answer !== undefined && answer !== null).length;
-  const accuracy = totalAnswered > 0 ? Math.round((correctAnswers / totalAnswered) * 100) : 0;
+  const uniqueAnswered = userAnswers.filter(answer => answer !== undefined && answer !== null && answer !== '').length;
+  const accuracy = uniqueAnswered > 0 ? Math.round((correctAnswers / uniqueAnswered) * 100) : 0;
   
   const isCompleted = currentQuestionIndex === questions.length - 1 && showAnswer;
 
@@ -198,18 +223,18 @@ export const Study = () => {
           </IonButtons>
           <IonTitle>Study Mode - {category.titleEnglish}</IonTitle>
         </IonToolbar>
-        <IonToolbar>
+        <IonToolbar style={{ padding: '4px 0' }}>
           <IonProgressBar value={progress} />
-          <div style={{ padding: '8px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ padding: '4px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8em' }}>
             <IonText color="medium">
-              Question {currentQuestionIndex + 1} of {questions.length}
+              {currentQuestionIndex + 1}/{questions.length}
             </IonText>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              <IonBadge color="success">
-                {correctAnswers} correct
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <IonBadge color="success" style={{ fontSize: '0.7em' }}>
+                {correctAnswers}✓
               </IonBadge>
-              <IonBadge color="medium">
-                {accuracy}% accuracy
+              <IonBadge color="medium" style={{ fontSize: '0.7em' }}>
+                {accuracy}%
               </IonBadge>
             </div>
           </div>
@@ -217,14 +242,14 @@ export const Study = () => {
       </IonHeader>
 
       <IonContent fullscreen>
-        <div style={{ padding: '16px' }}>
-          <IonCard>
-            <IonCardHeader>
-                          <IonCardTitle>
-              {currentQuestion.stem}
-            </IonCardTitle>
+        <div style={{ padding: '8px' }}>
+          <IonCard style={{ margin: '0' }}>
+            <IonCardHeader style={{ padding: '12px' }}>
+              <IonCardTitle style={{ fontSize: '1em', lineHeight: '1.3', margin: '0' }}>
+                {currentQuestion.stem}
+              </IonCardTitle>
             </IonCardHeader>
-            <IonCardContent>
+            <IonCardContent style={{ padding: '8px' }}>
               <IonRadioGroup 
                 value={selectedAnswer} 
                 onIonChange={e => handleAnswerSelect(e.detail.value)}
@@ -247,10 +272,11 @@ export const Study = () => {
                       key={`option-${currentQuestion.id}-${index}`} 
                       lines="full"
                       color={itemColor}
+                      style={{ paddingLeft: '8px', paddingRight: '8px' }}
                     >
                       <IonRadio value={option.id} slot="start" />
-                      <IonLabel>
-                        <span style={{ fontWeight: 'bold', marginRight: '8px' }}>
+                      <IonLabel style={{ fontSize: '0.9em' }}>
+                        <span style={{ fontWeight: 'bold', marginRight: '6px' }}>
                           {option.id}.
                         </span>
                         {option.text}
@@ -260,6 +286,7 @@ export const Study = () => {
                           icon={checkmarkCircleOutline} 
                           slot="end"
                           color="success"
+                          style={{ fontSize: '16px' }}
                         />
                       )}
                       {showAnswer && isSelected && !isCorrect && (
@@ -267,6 +294,7 @@ export const Study = () => {
                           icon={closeCircleOutline} 
                           slot="end"
                           color="danger"
+                          style={{ fontSize: '16px' }}
                         />
                       )}
                     </IonItem>
@@ -275,10 +303,11 @@ export const Study = () => {
               </IonRadioGroup>
 
               {!showAnswer && (
-                <div style={{ marginTop: '16px' }}>
+                <div style={{ marginTop: '8px' }}>
                   <IonButton 
                     expand="block"
                     fill="outline"
+                    size="small"
                     onClick={handleShowAnswer}
                   >
                     <IonIcon icon={informationCircleOutline} slot="start" />
@@ -295,19 +324,21 @@ export const Study = () => {
             display: 'flex', 
             justifyContent: 'space-between', 
             alignItems: 'center',
-            marginTop: '24px',
-            padding: '0 16px'
+            marginTop: '12px',
+            padding: '0 8px'
           }}>
             <IonButton 
               fill="outline" 
+              size="small"
               onClick={handlePrevious}
               disabled={currentQuestionIndex === 0}
             >
               <IonIcon icon={chevronBackOutline} slot="start" />
-              Previous
+              Prev
             </IonButton>
 
             <IonButton 
+              size="small"
               onClick={handleNext}
               disabled={currentQuestionIndex === questions.length - 1}
             >
@@ -335,16 +366,10 @@ export const Study = () => {
                   border: index === currentQuestionIndex ? '2px solid var(--ion-color-primary-shade)' : 'none',
                   cursor: 'pointer'
                 }}
-                                 onClick={() => {
-                   setCurrentQuestionIndex(index);
-                   setSelectedAnswer(null);
-                   setShowAnswer(false);
-                 }}
-                 onKeyDown={(e) => {
+                                 onClick={() => handleQuestionSelect(index)}
+                                 onKeyDown={(e) => {
                    if (e.key === 'Enter' || e.key === ' ') {
-                     setCurrentQuestionIndex(index);
-                     setSelectedAnswer(null);
-                     setShowAnswer(false);
+                     handleQuestionSelect(index);
                    }
                  }}
                  role="button"
@@ -367,7 +392,7 @@ export const Study = () => {
                     <h3>Your Study Results:</h3>
                     <p>
                       <strong>Total Questions:</strong> {questions.length}<br />
-                      <strong>Questions Answered:</strong> {totalAnswered}<br />
+                      <strong>Questions Answered:</strong> {uniqueAnswered}<br />
                       <strong>Correct Answers:</strong> {correctAnswers}<br />
                       <strong>Accuracy:</strong> {accuracy}%
                     </p>
@@ -420,7 +445,7 @@ export const Study = () => {
             <IonText color="medium">
               <p>
                 <strong>Study Mode:</strong> Practice with all {questions.length} questions<br />
-                <strong>Progress:</strong> {correctAnswers} correct out of {totalAnswered} answered<br />
+                <strong>Progress:</strong> {correctAnswers} correct out of {uniqueAnswered} answered<br />
                 <strong>Accuracy:</strong> {accuracy}%
               </p>
               {questions.length < 200 && (
@@ -431,6 +456,104 @@ export const Study = () => {
             </IonText>
           </div>
         </div>
+
+        {/* Floating Action Button for Question List */}
+        <IonFab vertical="bottom" horizontal="end" slot="fixed">
+          <IonFabButton 
+            size="small"
+            onClick={() => setShowQuestionList(true)}
+            color="primary"
+          >
+            <IonIcon icon={listOutline} />
+          </IonFabButton>
+        </IonFab>
+
+        {/* Question List Modal */}
+        <IonModal 
+          isOpen={showQuestionList} 
+          onDidDismiss={() => setShowQuestionList(false)}
+          breakpoints={[0, 0.5, 0.8]}
+          initialBreakpoint={0.8}
+        >
+          <IonHeader>
+            <IonToolbar>
+              <IonTitle>Question List</IonTitle>
+              <IonButtons slot="end">
+                <IonButton onClick={() => setShowQuestionList(false)}>
+                  Close
+                </IonButton>
+              </IonButtons>
+            </IonToolbar>
+            <IonToolbar>
+              <IonSearchbar
+                value={searchTerm}
+                onIonInput={e => setSearchTerm(e.detail.value || '')}
+                placeholder="Search questions..."
+                showClearButton="focus"
+              />
+            </IonToolbar>
+          </IonHeader>
+          <IonContent>
+            <IonList>
+              {filteredQuestions.map((question, index) => {
+                const isAnswered = userAnswers[index] && userAnswers[index] !== '';
+                const isCorrect = userAnswers[index] === question.answer;
+                const isCurrent = index === currentQuestionIndex;
+                
+                return (
+                  <IonItem 
+                    key={`list-${question.id}-${index}`}
+                    button
+                    onClick={() => handleQuestionSelect(index)}
+                    color={isCurrent ? 'primary' : undefined}
+                  >
+                    <IonLabel>
+                      <h3 style={{ 
+                        fontSize: '0.9em', 
+                        fontWeight: isCurrent ? 'bold' : 'normal',
+                        color: isCurrent ? 'var(--ion-color-primary)' : undefined
+                      }}>
+                        Question {index + 1}
+                      </h3>
+                      <p style={{ 
+                        fontSize: '0.8em', 
+                        color: 'var(--ion-color-medium)',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden'
+                      }}>
+                        {question.stem}
+                      </p>
+                    </IonLabel>
+                    <div slot="end" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      {isAnswered && (
+                        <IonBadge 
+                          color={isCorrect ? 'success' : 'danger'}
+                          style={{ fontSize: '0.6em' }}
+                        >
+                          {isCorrect ? '✓' : '✗'}
+                        </IonBadge>
+                      )}
+                      {isCurrent && (
+                        <IonBadge color="primary" style={{ fontSize: '0.6em' }}>
+                          Current
+                        </IonBadge>
+                      )}
+                    </div>
+                  </IonItem>
+                );
+              })}
+            </IonList>
+            {filteredQuestions.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '20px' }}>
+                <IonText color="medium">
+                  No questions found matching "{searchTerm}"
+                </IonText>
+              </div>
+            )}
+          </IonContent>
+        </IonModal>
       </IonContent>
     </IonPage>
   );

@@ -216,7 +216,6 @@ export const Test = () => {
       const score = calculateScore(answers, questions);
       const passed = isPassingScore(score);
       
-      // Save result
       progressManager.saveTestResult({
         categoryId,
         score,
@@ -226,10 +225,8 @@ export const Test = () => {
         completedAt: Date.now()
       });
       
-      // Clear progress
       progressManager.clearTestProgress(categoryId);
       
-      // Navigate to results page
       history.push('/results', {
         categoryId,
         score,
@@ -303,22 +300,22 @@ export const Test = () => {
             <IonButton onClick={handleExit}>Exit</IonButton>
           </IonButtons>
         </IonToolbar>
-        <IonToolbar>
+        <IonToolbar style={{ padding: '4px 0' }}>
           <IonProgressBar value={progress} />
-          <div style={{ padding: '8px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ padding: '4px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8em' }}>
             <IonText color="medium">
-              Question {currentQuestionIndex + 1} of {questions.length}
+              {currentQuestionIndex + 1}/{questions.length}
             </IonText>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <IonText color="medium">
-                {answeredCount}/{questions.length} answered
+                {answeredCount}/{questions.length}
               </IonText>
               <IonText 
                 color={timeLeft <= 60 ? 'danger' : timeLeft <= 300 ? 'warning' : 'medium'}
                 style={{ 
                   fontWeight: 'bold',
-                  fontSize: '1.1em',
-                  minWidth: '60px',
+                  fontSize: '0.9em',
+                  minWidth: '50px',
                   textAlign: 'center'
                 }}
               >
@@ -330,23 +327,23 @@ export const Test = () => {
       </IonHeader>
 
       <IonContent fullscreen>
-        <div style={{ padding: '16px' }}>
-          <IonCard>
-            <IonCardHeader>
-                          <IonCardTitle>
-              {currentQuestion.stem}
-            </IonCardTitle>
+        <div style={{ padding: '8px' }}>
+          <IonCard style={{ margin: '0' }}>
+            <IonCardHeader style={{ padding: '12px' }}>
+              <IonCardTitle style={{ fontSize: '1em', lineHeight: '1.3', margin: '0' }}>
+                {currentQuestion.stem}
+              </IonCardTitle>
             </IonCardHeader>
-            <IonCardContent>
+            <IonCardContent style={{ padding: '8px' }}>
               <IonRadioGroup 
                 value={selectedAnswer} 
                 onIonChange={e => handleAnswerSelect(e.detail.value)}
               >
                 {currentQuestion.options.map((option, index) => (
-                  <IonItem key={`option-${currentQuestion.id}-${index}`} lines="full">
+                  <IonItem key={`option-${currentQuestion.id}-${index}`} lines="full" style={{ paddingLeft: '8px', paddingRight: '8px' }}>
                     <IonRadio value={option.id} slot="start" />
-                    <IonLabel>
-                      <span style={{ fontWeight: 'bold', marginRight: '8px' }}>
+                    <IonLabel style={{ fontSize: '0.9em' }}>
+                      <span style={{ fontWeight: 'bold', marginRight: '6px' }}>
                         {option.id}.
                       </span>
                       {option.text}
@@ -361,23 +358,25 @@ export const Test = () => {
             display: 'flex', 
             justifyContent: 'space-between', 
             alignItems: 'center',
-            marginTop: '24px',
-            padding: '0 16px'
+            marginTop: '12px',
+            padding: '0 8px'
           }}>
             <IonButton 
               fill="outline" 
+              size="small"
               onClick={handlePrevious}
               disabled={currentQuestionIndex === 0}
             >
               <IonIcon icon={chevronBackOutline} slot="start" />
-              Previous
+              Prev
             </IonButton>
 
             <IonButton 
+              size="small"
               onClick={handleNext}
               disabled={selectedAnswer === null}
             >
-              {currentQuestionIndex === questions.length - 1 ? 'Finish Test' : 'Next'}
+              {currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next'}
               <IonIcon icon={chevronForwardOutline} slot="end" />
             </IonButton>
           </div>
@@ -385,22 +384,22 @@ export const Test = () => {
           <div style={{ 
             display: 'flex', 
             justifyContent: 'center', 
-            marginTop: '16px',
-            gap: '8px'
+            marginTop: '8px',
+            gap: '6px'
           }}>
             {questions.map((question, index) => (
               <div
                 key={`question-${question.id}-${index}`}
                 style={{
-                  width: '12px',
-                  height: '12px',
+                  width: '8px',
+                  height: '8px',
                   borderRadius: '50%',
                   backgroundColor: index === currentQuestionIndex 
                     ? 'var(--ion-color-primary)' 
                     : answers[index] !== '' 
                       ? 'var(--ion-color-success)' 
                       : 'var(--ion-color-medium)',
-                  border: index === currentQuestionIndex ? '2px solid var(--ion-color-primary-shade)' : 'none'
+                  border: index === currentQuestionIndex ? '1px solid var(--ion-color-primary-shade)' : 'none'
                 }}
               />
             ))}
