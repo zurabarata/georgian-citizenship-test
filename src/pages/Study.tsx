@@ -42,8 +42,7 @@ export const Study = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
-  const [correctAnswers, setCorrectAnswers] = useState(0);
-  const [totalAnswered, setTotalAnswered] = useState(0);
+  const [userAnswers, setUserAnswers] = useState<string[]>([]);
 
   useEffect(() => {
     if (categoryId) {
@@ -54,9 +53,14 @@ export const Study = () => {
         // Load saved study progress
         const savedProgress = progressManager.getStudyProgress(categoryId) as StudyProgress;
         if (savedProgress) {
-          setCorrectAnswers(savedProgress.correctAnswers);
-          setTotalAnswered(savedProgress.totalAnswered);
+          setUserAnswers(savedProgress.answers || []);
           setCurrentQuestionIndex(savedProgress.lastQuestionIndex);
+          
+          // Set selected answer if the current question was already answered
+          if (savedProgress.answers?.[savedProgress.lastQuestionIndex]) {
+            setSelectedAnswer(savedProgress.answers[savedProgress.lastQuestionIndex]);
+            setShowAnswer(true);
+          }
         }
       }
     }
@@ -68,18 +72,24 @@ export const Study = () => {
     setSelectedAnswer(answerId);
     setShowAnswer(true);
     
-    const newCorrectAnswers = answerId === currentQuestion.answer ? correctAnswers + 1 : correctAnswers;
-    const newTotalAnswered = totalAnswered + 1;
+    // Update user answers array
+    const newUserAnswers = [...userAnswers];
+    newUserAnswers[currentQuestionIndex] = answerId;
+    setUserAnswers(newUserAnswers);
     
-    setCorrectAnswers(newCorrectAnswers);
-    setTotalAnswered(newTotalAnswered);
+    // Calculate correct answers and total answered from the answers array
+    const correctAnswers = newUserAnswers.filter((answer, index) => 
+      answer === questions[index]?.answer
+    ).length;
+    const totalAnswered = newUserAnswers.filter(answer => answer !== undefined && answer !== null).length;
     
     // Save study progress
     progressManager.saveStudyProgress({
       categoryId,
-      correctAnswers: newCorrectAnswers,
-      totalAnswered: newTotalAnswered,
-      lastQuestionIndex: currentQuestionIndex
+      correctAnswers,
+      totalAnswered,
+      lastQuestionIndex: currentQuestionIndex,
+      answers: newUserAnswers
     });
   };
 
@@ -92,12 +102,19 @@ export const Study = () => {
   };
 
   const handleCompleteStudy = () => {
+    // Calculate final scores from user answers
+    const correctAnswers = userAnswers.filter((answer, index) => 
+      answer === questions[index]?.answer
+    ).length;
+    const totalAnswered = userAnswers.filter(answer => answer !== undefined && answer !== null).length;
+    
     // Save final progress
     progressManager.saveStudyProgress({
       categoryId,
       correctAnswers,
       totalAnswered,
-      lastQuestionIndex: questions.length - 1
+      lastQuestionIndex: questions.length - 1,
+      answers: userAnswers
     });
     
     // Navigate to home
@@ -116,15 +133,15 @@ export const Study = () => {
     setCurrentQuestionIndex(0);
     setSelectedAnswer(null);
     setShowAnswer(false);
-    setCorrectAnswers(0);
-    setTotalAnswered(0);
+    setUserAnswers([]);
     
     // Clear saved progress
     progressManager.saveStudyProgress({
       categoryId,
       correctAnswers: 0,
       totalAnswered: 0,
-      lastQuestionIndex: 0
+      lastQuestionIndex: 0,
+      answers: []
     });
   };
 
@@ -142,7 +159,14 @@ export const Study = () => {
 
   const currentQuestion = questions[currentQuestionIndex];
   const progress = (currentQuestionIndex + 1) / questions.length;
+  
+  // Calculate scores from user answers array
+  const correctAnswers = userAnswers.filter((answer, index) => 
+    answer === questions[index]?.answer
+  ).length;
+  const totalAnswered = userAnswers.filter(answer => answer !== undefined && answer !== null).length;
   const accuracy = totalAnswered > 0 ? Math.round((correctAnswers / totalAnswered) * 100) : 0;
+  
   const isCompleted = currentQuestionIndex === questions.length - 1 && showAnswer;
 
   if (!currentQuestion || !category) {
@@ -224,8 +248,13 @@ export const Study = () => {
                       lines="full"
                       color={itemColor}
                     >
-                                          <IonRadio value={option.id} slot="start" />
-                    <IonLabel>{option.text}</IonLabel>
+                      <IonRadio value={option.id} slot="start" />
+                      <IonLabel>
+                        <span style={{ fontWeight: 'bold', marginRight: '8px' }}>
+                          {option.id}.
+                        </span>
+                        {option.text}
+                      </IonLabel>
                       {showAnswer && isCorrect && (
                         <IonIcon 
                           icon={checkmarkCircleOutline} 

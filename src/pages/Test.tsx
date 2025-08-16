@@ -72,6 +72,39 @@ export const Test = () => {
         const originalStartTime = savedProgress.startTime || Date.now();
         const elapsedTime = Math.floor((Date.now() - originalStartTime) / 1000);
         const remainingTime = Math.max(0, 15 * 60 - elapsedTime);
+        
+        // If time has expired, auto-submit the test
+        if (remainingTime <= 0) {
+          // Time has expired, submit the test automatically
+          const score = calculateScore(savedProgress.answers, savedProgress.questions || []);
+          const passed = isPassingScore(score);
+          
+          // Save result
+          progressManager.saveTestResult({
+            categoryId,
+            score,
+            totalQuestions: savedProgress.questions?.length || 10,
+            passed,
+            answers: savedProgress.answers,
+            completedAt: Date.now()
+          });
+          
+          // Clear progress
+          progressManager.clearTestProgress(categoryId);
+          
+          // Navigate to results page
+          history.push('/results', {
+            categoryId,
+            score,
+            totalQuestions: savedProgress.questions?.length || 10,
+            passed,
+            answers: savedProgress.answers,
+            questions: savedProgress.questions || [],
+            timeUp: true
+          });
+          return;
+        }
+        
         setTimeLeft(remainingTime);
         setStartTime(originalStartTime);
       } else {
@@ -93,7 +126,7 @@ export const Test = () => {
         });
       }
     }
-  }, [categoryId]);
+  }, [categoryId, history]);
 
   // Timer effect
   useEffect(() => {
@@ -312,7 +345,12 @@ export const Test = () => {
                 {currentQuestion.options.map((option, index) => (
                   <IonItem key={`option-${currentQuestion.id}-${index}`} lines="full">
                     <IonRadio value={option.id} slot="start" />
-                    <IonLabel>{option.text}</IonLabel>
+                    <IonLabel>
+                      <span style={{ fontWeight: 'bold', marginRight: '8px' }}>
+                        {option.id}.
+                      </span>
+                      {option.text}
+                    </IonLabel>
                   </IonItem>
                 ))}
               </IonRadioGroup>

@@ -190,7 +190,7 @@ export const TestOverview = () => {
             </IonRow>
           </IonGrid>
 
-          {/* Test Tips */}
+          {/* Test Tips 
           <IonCard style={{ marginTop: '24px' }}>
             <IonCardHeader>
               <IonCardTitle>💡 Test Tips</IonCardTitle>
@@ -207,6 +207,7 @@ export const TestOverview = () => {
               </IonText>
             </IonCardContent>
           </IonCard>
+          */}
         </div>
 
         <IonAlert

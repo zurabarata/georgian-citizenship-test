@@ -29,11 +29,19 @@ import {
   refreshOutline
 } from 'ionicons/icons';
 import { testCategories } from '../data/questions';
-import { progressManager } from '../utils/progressManager';
+import { progressManager, type TestResult, type StudyProgress } from '../utils/progressManager';
 
 export const Progress = () => {
   const [userStats, setUserStats] = useState(progressManager.getUserStats());
-  const [categoryStats, setCategoryStats] = useState<any[]>([]);
+  const [categoryStats, setCategoryStats] = useState<Array<{
+    id: string;
+    title: string;
+    titleGeorgian: string;
+    testProgress: unknown;
+    testResult: TestResult | null;
+    studyProgress: StudyProgress | null;
+    questionsCount: number;
+  }>>([]);
 
   useEffect(() => {
     loadStats();
@@ -45,7 +53,7 @@ export const Progress = () => {
 
     const categoryData = testCategories.map(category => {
       const testProgress = progressManager.getTestProgress(category.id);
-      const studyProgress = progressManager.getStudyProgress(category.id);
+      const studyProgress = progressManager.getStudyProgress(category.id) as StudyProgress | null;
       const testResult = progressManager.getLastTestResult(category.id);
       
       return {
@@ -63,15 +71,16 @@ export const Progress = () => {
   };
 
   const handleClearAllProgress = () => {
-    testCategories.forEach(category => {
+    for (const category of testCategories) {
       progressManager.clearTestProgress(category.id);
       progressManager.saveStudyProgress({
         categoryId: category.id,
         correctAnswers: 0,
         totalAnswered: 0,
-        lastQuestionIndex: 0
+        lastQuestionIndex: 0,
+        answers: []
       });
-    });
+    }
     loadStats();
   };
 
@@ -198,15 +207,15 @@ export const Progress = () => {
                     .map((category) => (
                       <IonItem key={category.id} lines="full">
                         <IonIcon 
-                          icon={category.testResult.passed ? checkmarkCircleOutline : timeOutline} 
+                          icon={category.testResult?.passed ? checkmarkCircleOutline : timeOutline} 
                           slot="start" 
-                          color={category.testResult.passed ? "success" : "warning"} 
+                          color={category.testResult?.passed ? "success" : "warning"} 
                         />
                         <IonLabel>
                           <h3>{category.title}</h3>
-                          <p>Score: {category.testResult.score}/10 - {category.testResult.passed ? 'Passed' : 'Failed'}</p>
+                          <p>Score: {category.testResult?.score}/10 - {category.testResult?.passed ? 'Passed' : 'Failed'}</p>
                           <p style={{ fontSize: '0.8em', color: 'var(--ion-color-medium)' }}>
-                            {new Date(category.testResult.completedAt).toLocaleDateString()}
+                            {new Date(category.testResult?.completedAt || 0).toLocaleDateString()}
                           </p>
                         </IonLabel>
                       </IonItem>

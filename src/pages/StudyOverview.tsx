@@ -171,7 +171,7 @@ export const StudyOverview = () => {
             </IonRow>
           </IonGrid>
 
-          {/* Study Tips */}
+          {/* Study Tips
           <IonCard style={{ marginTop: '24px' }}>
             <IonCardHeader>
               <IonCardTitle>💡 Study Tips</IonCardTitle>
@@ -187,6 +187,7 @@ export const StudyOverview = () => {
               </IonText>
             </IonCardContent>
           </IonCard>
+           */}
         </div>
       </IonContent>
     </IonPage>

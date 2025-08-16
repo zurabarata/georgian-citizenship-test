@@ -23,6 +23,7 @@ export interface StudyProgress {
   correctAnswers: number;
   totalAnswered: number;
   lastQuestionIndex: number;
+  answers: string[]; // Array to store user answers for each question
 }
 
 export interface UserStats {

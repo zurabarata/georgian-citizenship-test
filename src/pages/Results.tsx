@@ -231,7 +231,7 @@ export const Results = () => {
                         <div style={{ width: '100%' }}>
                           <IonText>
                             <h4 style={{ margin: '0 0 8px 0' }}>
-                              Question {index + 1}
+                              Question {question.id} ({index + 1})
                             </h4>
                             <p style={{ margin: '0 0 12px 0' }}>
                               {question.stem}
@@ -252,7 +252,7 @@ export const Results = () => {
                               }}
                             />
                             <IonText color="medium">
-                              Your answer: {userAnswerText}
+                              Your answer: {userAnswer !== '' ? `${userAnswer}. ${userAnswerText}` : 'Not answered'}
                             </IonText>
                           </div>
 
@@ -271,7 +271,7 @@ export const Results = () => {
                                 }}
                               />
                               <IonText color="success">
-                                Correct answer: {correctAnswerText}
+                                Correct answer: {question.answer}. {correctAnswerText}
                               </IonText>
                             </div>
                           )}

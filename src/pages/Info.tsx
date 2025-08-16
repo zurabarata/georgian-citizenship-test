@@ -118,7 +118,7 @@ export const Info = () => {
             </IonCardContent>
           </IonCard>
 
-          {/* Tips */}
+          {/* Tips  
           <IonCard>
             <IonCardHeader>
               <IonCardTitle>💡 Study Tips</IonCardTitle>
@@ -152,7 +152,8 @@ export const Info = () => {
               </IonList>
             </IonCardContent>
           </IonCard>
-
+          */}
+ 
           {/* Settings */}
           <IonCard>
             <IonCardHeader>
