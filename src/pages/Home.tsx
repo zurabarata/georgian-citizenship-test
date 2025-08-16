@@ -75,7 +75,7 @@ export const Home = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Georgian Citizenship Test</IonTitle>
+          <IonTitle>🏠 Dashboard</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -220,8 +220,7 @@ export const Home = () => {
             <IonText color="medium">
               <p>
                 <strong>Test Format:</strong> 10 multiple choice questions per category<br />
-                <strong>Passing Score:</strong> 7 out of 10 correct answers<br />
-                <strong>Time Limit:</strong> No time limit - take your time to think
+                <strong>Passing Score:</strong> 7 out of 10 correct answers
               </p>
             </IonText>
           </div>

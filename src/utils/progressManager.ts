@@ -1,9 +1,12 @@
+import type { Question } from '../data/questions';
+
 export interface TestProgress {
   categoryId: string;
   currentQuestionIndex: number;
   answers: string[];
   startTime: number;
   completed: boolean;
+  questions?: Question[]; // Store the questions to maintain consistency
 }
 
 export interface TestResult {

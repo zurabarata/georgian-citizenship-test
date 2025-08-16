@@ -39,6 +39,7 @@ interface ResultsData {
   passed: boolean;
   answers: string[];
   questions: Question[];
+  timeUp?: boolean;
 }
 
 export const Results = () => {
@@ -53,7 +54,7 @@ export const Results = () => {
     return null;
   }
 
-  const { categoryId, score, totalQuestions, passed, answers, questions } = location.state;
+  const { categoryId, score, totalQuestions, passed, answers, questions, timeUp } = location.state;
   const category = testCategories.find(cat => cat.id === categoryId);
   const percentage = Math.round((score / totalQuestions) * 100);
 
@@ -131,6 +132,11 @@ export const Results = () => {
                 <IonText color="medium">
                   <p>You scored {score} out of {totalQuestions} ({percentage}%)</p>
                   <p>Minimum required: 7 out of 10 to pass</p>
+                  {timeUp && (
+                    <p style={{ color: 'var(--ion-color-warning)', fontWeight: 'bold', marginTop: '8px' }}>
+                      ⏰ Test was automatically submitted when time ran out
+                    </p>
+                  )}
                 </IonText>
               </div>
 

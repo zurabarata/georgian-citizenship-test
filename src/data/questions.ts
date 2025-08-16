@@ -2552,11 +2552,11 @@ export const testCategories: TestCategory[] = [
             "text": "რუსუდანი"
           },
           {
-            "id": "D",
+            "id": "D", 
             "text": "ბაგრატ III"
           }
         ],
-        "answer": "C"
+        "answer": "B"
       },
       {
         "id": 106,

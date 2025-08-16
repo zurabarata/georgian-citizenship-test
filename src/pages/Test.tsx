@@ -46,6 +46,8 @@ export const Test = () => {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [showExitAlert, setShowExitAlert] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(15 * 60); // 15 minutes in seconds
+  const [startTime, setStartTime] = useState<number | null>(null);
 
   useEffect(() => {
     if (categoryId) {
@@ -54,27 +56,93 @@ export const Test = () => {
       
       if (savedProgress && !savedProgress.completed) {
         // Restore saved progress
-        setQuestions(getRandomQuestions(categoryId, 10)); // We'll need to store questions too
+        if (savedProgress.questions) {
+          // Use the saved questions to maintain consistency
+          setQuestions(savedProgress.questions);
+        } else {
+          // Fallback to generating new questions (for backward compatibility)
+          const randomQuestions = getRandomQuestions(categoryId, 10);
+          setQuestions(randomQuestions);
+        }
         setCurrentQuestionIndex(savedProgress.currentQuestionIndex);
         setAnswers(savedProgress.answers);
         setSelectedAnswer(savedProgress.answers[savedProgress.currentQuestionIndex] !== '' ? savedProgress.answers[savedProgress.currentQuestionIndex] : null);
+        
+        // Restore timer - ensure we have a valid start time
+        const originalStartTime = savedProgress.startTime || Date.now();
+        const elapsedTime = Math.floor((Date.now() - originalStartTime) / 1000);
+        const remainingTime = Math.max(0, 15 * 60 - elapsedTime);
+        setTimeLeft(remainingTime);
+        setStartTime(originalStartTime);
       } else {
         // Start new test
         const randomQuestions = getRandomQuestions(categoryId, 10);
         setQuestions(randomQuestions);
         setAnswers(new Array(randomQuestions.length).fill(''));
+        const now = Date.now();
+        setStartTime(now);
         
         // Save initial progress
         progressManager.saveTestProgress({
           categoryId,
           currentQuestionIndex: 0,
           answers: new Array(randomQuestions.length).fill(''),
-          startTime: Date.now(),
-          completed: false
+          startTime: now,
+          completed: false,
+          questions: randomQuestions
         });
       }
     }
   }, [categoryId]);
+
+  // Timer effect
+  useEffect(() => {
+    if (startTime && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft(prev => {
+          const newTime = prev - 1;
+          if (newTime <= 0) {
+            // Time's up! Auto-submit the test
+            handleTimeUp();
+            return 0;
+          }
+          return newTime;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [startTime, timeLeft]);
+
+  const handleTimeUp = () => {
+    // Auto-submit the test when time runs out
+    const score = calculateScore(answers, questions);
+    const passed = isPassingScore(score);
+    
+    // Save result
+    progressManager.saveTestResult({
+      categoryId,
+      score,
+      totalQuestions: questions.length,
+      passed,
+      answers,
+      completedAt: Date.now()
+    });
+    
+    // Clear progress
+    progressManager.clearTestProgress(categoryId);
+    
+    // Navigate to results page
+    history.push('/results', {
+      categoryId,
+      score,
+      totalQuestions: questions.length,
+      passed,
+      answers,
+      questions,
+      timeUp: true
+    });
+  };
 
   const category = testCategories.find(cat => cat.id === categoryId);
 
@@ -84,13 +152,14 @@ export const Test = () => {
     newAnswers[currentQuestionIndex] = answerId;
     setAnswers(newAnswers);
     
-    // Save progress
+    // Save progress - preserve the original start time
     progressManager.saveTestProgress({
       categoryId,
       currentQuestionIndex,
       answers: newAnswers,
-      startTime: Date.now(),
-      completed: false
+      startTime: startTime || Date.now(),
+      completed: false,
+      questions: questions
     });
   };
 
@@ -100,13 +169,14 @@ export const Test = () => {
       setCurrentQuestionIndex(nextIndex);
       setSelectedAnswer(answers[nextIndex] !== '' ? answers[nextIndex] : null);
       
-      // Save progress
+      // Save progress - preserve the original start time
       progressManager.saveTestProgress({
         categoryId,
         currentQuestionIndex: nextIndex,
         answers,
-        startTime: Date.now(),
-        completed: false
+        startTime: startTime || Date.now(),
+        completed: false,
+        questions: questions
       });
     } else {
       // Test completed
@@ -144,13 +214,14 @@ export const Test = () => {
       setCurrentQuestionIndex(prevIndex);
       setSelectedAnswer(answers[prevIndex] !== '' ? answers[prevIndex] : null);
       
-      // Save progress
+      // Save progress - preserve the original start time
       progressManager.saveTestProgress({
         categoryId,
         currentQuestionIndex: prevIndex,
         answers,
-        startTime: Date.now(),
-        completed: false
+        startTime: startTime || Date.now(),
+        completed: false,
+        questions: questions
       });
     }
   };
@@ -205,9 +276,22 @@ export const Test = () => {
             <IonText color="medium">
               Question {currentQuestionIndex + 1} of {questions.length}
             </IonText>
-            <IonText color="medium">
-              {answeredCount}/{questions.length} answered
-            </IonText>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <IonText color="medium">
+                {answeredCount}/{questions.length} answered
+              </IonText>
+              <IonText 
+                color={timeLeft <= 60 ? 'danger' : timeLeft <= 300 ? 'warning' : 'medium'}
+                style={{ 
+                  fontWeight: 'bold',
+                  fontSize: '1.1em',
+                  minWidth: '60px',
+                  textAlign: 'center'
+                }}
+              >
+                {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+              </IonText>
+            </div>
           </div>
         </IonToolbar>
       </IonHeader>
