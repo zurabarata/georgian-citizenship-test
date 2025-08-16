@@ -39,8 +39,10 @@ class ProgressManager {
   // Test Progress Management
   saveTestProgress(progress: TestProgress): void {
     const allProgress = this.getTestProgress() as Record<string, TestProgress>;
-    allProgress[progress.categoryId] = progress;
-    localStorage.setItem(this.PROGRESS_KEY, JSON.stringify(allProgress));
+    if (allProgress) {
+      allProgress[progress.categoryId] = progress;
+      localStorage.setItem(this.PROGRESS_KEY, JSON.stringify(allProgress));
+    }
   }
 
   getTestProgress(categoryId?: string): Record<string, TestProgress> | TestProgress | null {
@@ -54,8 +56,10 @@ class ProgressManager {
   clearTestProgress(categoryId?: string): void {
     if (categoryId) {
       const allProgress = this.getTestProgress() as Record<string, TestProgress>;
-      delete allProgress[categoryId];
-      localStorage.setItem(this.PROGRESS_KEY, JSON.stringify(allProgress));
+      if (allProgress) {
+        delete allProgress[categoryId];
+        localStorage.setItem(this.PROGRESS_KEY, JSON.stringify(allProgress));
+      }
     } else {
       localStorage.removeItem(this.PROGRESS_KEY);
     }
@@ -64,11 +68,13 @@ class ProgressManager {
   // Test Results Management
   saveTestResult(result: TestResult): void {
     const allResults = this.getTestResults() as Record<string, TestResult>;
-    allResults[result.categoryId] = result;
-    localStorage.setItem(this.RESULTS_KEY, JSON.stringify(allResults));
-    
-    // Update user stats
-    this.updateUserStats(result);
+    if (allResults) {
+      allResults[result.categoryId] = result;
+      localStorage.setItem(this.RESULTS_KEY, JSON.stringify(allResults));
+      
+      // Update user stats
+      this.updateUserStats(result);
+    }
   }
 
   getTestResults(categoryId?: string): Record<string, TestResult> | TestResult | null {
@@ -82,8 +88,10 @@ class ProgressManager {
   // Study Progress Management
   saveStudyProgress(progress: StudyProgress): void {
     const allProgress = this.getStudyProgress() as Record<string, StudyProgress>;
-    allProgress[progress.categoryId] = progress;
-    localStorage.setItem(this.STUDY_KEY, JSON.stringify(allProgress));
+    if (allProgress) {
+      allProgress[progress.categoryId] = progress;
+      localStorage.setItem(this.STUDY_KEY, JSON.stringify(allProgress));
+    }
   }
 
   getStudyProgress(categoryId?: string): Record<string, StudyProgress> | StudyProgress | null {
