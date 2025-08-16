@@ -337,6 +337,7 @@ export const Study = () => {
                   <IonText>
                     <h3>Your Study Results:</h3>
                     <p>
+                      <strong>Total Questions:</strong> {questions.length}<br />
                       <strong>Questions Answered:</strong> {totalAnswered}<br />
                       <strong>Correct Answers:</strong> {correctAnswers}<br />
                       <strong>Accuracy:</strong> {accuracy}%
@@ -389,10 +390,15 @@ export const Study = () => {
           <div style={{ marginTop: '24px', textAlign: 'center' }}>
             <IonText color="medium">
               <p>
-                <strong>Study Mode:</strong> Practice with all questions<br />
+                <strong>Study Mode:</strong> Practice with all {questions.length} questions<br />
                 <strong>Progress:</strong> {correctAnswers} correct out of {totalAnswered} answered<br />
                 <strong>Accuracy:</strong> {accuracy}%
               </p>
+              {questions.length < 200 && (
+                <p style={{ fontSize: '0.9em', marginTop: '8px' }}>
+                  <em>Note: Currently showing {questions.length} sample questions. Add more questions to reach the full 200.</em>
+                </p>
+              )}
             </IonText>
           </div>
         </div>
