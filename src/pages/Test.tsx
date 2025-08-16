@@ -42,8 +42,8 @@ export const Test = () => {
   const history = useHistory();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<number[]>([]);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [answers, setAnswers] = useState<string[]>([]);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [showExitAlert, setShowExitAlert] = useState(false);
 
@@ -57,18 +57,18 @@ export const Test = () => {
         setQuestions(getRandomQuestions(categoryId, 10)); // We'll need to store questions too
         setCurrentQuestionIndex(savedProgress.currentQuestionIndex);
         setAnswers(savedProgress.answers);
-        setSelectedAnswer(savedProgress.answers[savedProgress.currentQuestionIndex] !== -1 ? savedProgress.answers[savedProgress.currentQuestionIndex] : null);
+        setSelectedAnswer(savedProgress.answers[savedProgress.currentQuestionIndex] !== '' ? savedProgress.answers[savedProgress.currentQuestionIndex] : null);
       } else {
         // Start new test
         const randomQuestions = getRandomQuestions(categoryId, 10);
         setQuestions(randomQuestions);
-        setAnswers(new Array(randomQuestions.length).fill(-1));
+        setAnswers(new Array(randomQuestions.length).fill(''));
         
         // Save initial progress
         progressManager.saveTestProgress({
           categoryId,
           currentQuestionIndex: 0,
-          answers: new Array(randomQuestions.length).fill(-1),
+          answers: new Array(randomQuestions.length).fill(''),
           startTime: Date.now(),
           completed: false
         });
@@ -78,10 +78,10 @@ export const Test = () => {
 
   const category = testCategories.find(cat => cat.id === categoryId);
 
-  const handleAnswerSelect = (answerIndex: number) => {
-    setSelectedAnswer(answerIndex);
+  const handleAnswerSelect = (answerId: string) => {
+    setSelectedAnswer(answerId);
     const newAnswers = [...answers];
-    newAnswers[currentQuestionIndex] = answerIndex;
+    newAnswers[currentQuestionIndex] = answerId;
     setAnswers(newAnswers);
     
     // Save progress
@@ -98,7 +98,7 @@ export const Test = () => {
     if (currentQuestionIndex < questions.length - 1) {
       const nextIndex = currentQuestionIndex + 1;
       setCurrentQuestionIndex(nextIndex);
-      setSelectedAnswer(answers[nextIndex] !== -1 ? answers[nextIndex] : null);
+      setSelectedAnswer(answers[nextIndex] !== '' ? answers[nextIndex] : null);
       
       // Save progress
       progressManager.saveTestProgress({
@@ -142,7 +142,7 @@ export const Test = () => {
     if (currentQuestionIndex > 0) {
       const prevIndex = currentQuestionIndex - 1;
       setCurrentQuestionIndex(prevIndex);
-      setSelectedAnswer(answers[prevIndex] !== -1 ? answers[prevIndex] : null);
+      setSelectedAnswer(answers[prevIndex] !== '' ? answers[prevIndex] : null);
       
       // Save progress
       progressManager.saveTestProgress({
@@ -165,7 +165,7 @@ export const Test = () => {
 
   const currentQuestion = questions[currentQuestionIndex];
   const progress = (currentQuestionIndex + 1) / questions.length;
-  const answeredCount = answers.filter(answer => answer !== -1).length;
+  const answeredCount = answers.filter(answer => answer !== '').length;
 
   if (!currentQuestion || !category) {
     return (
@@ -194,7 +194,7 @@ export const Test = () => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/" />
           </IonButtons>
-          <IonTitle>{category.name}</IonTitle>
+          <IonTitle>{category.titleEnglish}</IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={handleExit}>Exit</IonButton>
           </IonButtons>
@@ -216,9 +216,9 @@ export const Test = () => {
         <div style={{ padding: '16px' }}>
           <IonCard>
             <IonCardHeader>
-              <IonCardTitle>
-                {currentQuestion.question}
-              </IonCardTitle>
+                          <IonCardTitle>
+              {currentQuestion.stem}
+            </IonCardTitle>
             </IonCardHeader>
             <IonCardContent>
               <IonRadioGroup 
@@ -227,8 +227,8 @@ export const Test = () => {
               >
                 {currentQuestion.options.map((option, index) => (
                   <IonItem key={`option-${currentQuestion.id}-${index}`} lines="full">
-                    <IonRadio value={index} slot="start" />
-                    <IonLabel>{option}</IonLabel>
+                    <IonRadio value={option.id} slot="start" />
+                    <IonLabel>{option.text}</IonLabel>
                   </IonItem>
                 ))}
               </IonRadioGroup>
@@ -275,7 +275,7 @@ export const Test = () => {
                   borderRadius: '50%',
                   backgroundColor: index === currentQuestionIndex 
                     ? 'var(--ion-color-primary)' 
-                    : answers[index] !== -1 
+                    : answers[index] !== '' 
                       ? 'var(--ion-color-success)' 
                       : 'var(--ion-color-medium)',
                   border: index === currentQuestionIndex ? '2px solid var(--ion-color-primary-shade)' : 'none'

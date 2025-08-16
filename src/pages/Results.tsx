@@ -36,7 +36,7 @@ interface ResultsData {
   score: number;
   totalQuestions: number;
   passed: boolean;
-  answers: number[];
+  answers: string[];
   questions: Question[];
 }
 
@@ -90,7 +90,7 @@ export const Results = () => {
           <IonCard>
             <IonCardHeader>
               <IonCardTitle style={{ textAlign: 'center' }}>
-                {category?.name}
+                {category?.titleEnglish}
               </IonCardTitle>
             </IonCardHeader>
             <IonCardContent>
@@ -200,9 +200,9 @@ export const Results = () => {
                 <IonList>
                   {questions.map((question, index) => {
                     const userAnswer = answers[index];
-                    const isCorrect = userAnswer === question.correctAnswer;
-                    const userAnswerText = userAnswer !== -1 ? question.options[userAnswer] : 'Not answered';
-                    const correctAnswerText = question.options[question.correctAnswer];
+                    const isCorrect = userAnswer === question.answer;
+                    const userAnswerText = userAnswer !== '' ? question.options.find(opt => opt.id === userAnswer)?.text || 'Not answered' : 'Not answered';
+                    const correctAnswerText = question.options.find(opt => opt.id === question.answer)?.text || '';
 
                     return (
                       <IonItem key={`question-${question.id}-${index}`} lines="full">
@@ -212,7 +212,7 @@ export const Results = () => {
                               Question {index + 1}
                             </h4>
                             <p style={{ margin: '0 0 12px 0' }}>
-                              {question.question}
+                              {question.stem}
                             </p>
                           </IonText>
 
@@ -254,18 +254,7 @@ export const Results = () => {
                             </div>
                           )}
 
-                          {question.explanation && (
-                            <div style={{ 
-                              backgroundColor: 'var(--ion-color-light)',
-                              padding: '8px',
-                              borderRadius: '4px',
-                              marginTop: '8px'
-                            }}>
-                              <IonText color="medium" style={{ fontSize: '14px' }}>
-                                <strong>Explanation:</strong> {question.explanation}
-                              </IonText>
-                            </div>
-                          )}
+
                         </div>
                       </IonItem>
                     );

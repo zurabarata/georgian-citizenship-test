@@ -45,7 +45,7 @@ A comprehensive mobile-first web application to help prepare for the Georgian ci
 1. **Clone the repository**
    ```bash
    git clone <your-repo-url>
-   cd citizenship-test-app
+   cd georgian-citizenship-test
    ```
 
 2. **Install dependencies**

@@ -1,15 +1,19 @@
+export interface Option {
+  id: string;
+  text: string;
+}
+
 export interface Question {
   id: number;
-  question: string;
-  options: string[];
-  correctAnswer: number; // Index of correct answer (0-3)
-  explanation?: string;
+  stem: string;
+  options: Option[];
+  answer: string;
 }
 
 export interface TestCategory {
   id: string;
-  name: string;
-  nameGeorgian: string;
+  title: string;
+  titleEnglish: string;
   description: string;
   questions: Question[];
 }
@@ -17,235 +21,355 @@ export interface TestCategory {
 export const testCategories: TestCategory[] = [
   {
     id: 'georgian',
-    name: 'Georgian Language',
-    nameGeorgian: 'ქართული ენა',
+    title: 'ქართული ენა — მოქალაქეობის ტესტი',
+    titleEnglish: 'Georgian Language — Citizenship Test',
     description: 'Test your knowledge of Georgian language and grammar',
     questions: [
       {
         id: 1,
-        question: 'What is the capital of Georgia?',
-        options: ['Tbilisi', 'Batumi', 'Kutaisi', 'Rustavi'],
-        correctAnswer: 0,
-        explanation: 'Tbilisi is the capital and largest city of Georgia.'
+        stem: 'რა არის ქართული ენის ოფიციალური სახელი?',
+        options: [
+          { id: 'A', text: 'ქართული' },
+          { id: 'B', text: 'საქართველური' },
+          { id: 'C', text: 'კართული' },
+          { id: 'D', text: 'გეორგიული' }
+        ],
+        answer: 'A'
       },
       {
         id: 2,
-        question: 'How do you say "Hello" in Georgian?',
-        options: ['გამარჯობა (Gamarjoba)', 'ნახვამდის (Nakhvamdis)', 'მადლობა (Madloba)', 'გმარჯობთ (Gmarchobt)'],
-        correctAnswer: 0,
-        explanation: 'გამარჯობა (Gamarjoba) is the standard greeting in Georgian.'
+        stem: 'რამდენი ასოა ქართულ ანბანში?',
+        options: [
+          { id: 'A', text: '30' },
+          { id: 'B', text: '33' },
+          { id: 'C', text: '28' },
+          { id: 'D', text: '35' }
+        ],
+        answer: 'B'
       },
       {
         id: 3,
-        question: 'What is the Georgian alphabet called?',
-        options: ['Georgian Script', 'Mkhedruli', 'Asomtavruli', 'Nuskhuri'],
-        correctAnswer: 1,
-        explanation: 'Mkhedruli is the modern Georgian alphabet used today.'
+        stem: 'რა ეწოდება ქართული ანბანის თანამედროვე სახეობას?',
+        options: [
+          { id: 'A', text: 'ასომთავრული' },
+          { id: 'B', text: 'მხედრული' },
+          { id: 'C', text: 'ნუსხური' },
+          { id: 'D', text: 'ხუცური' }
+        ],
+        answer: 'B'
       },
       {
         id: 4,
-        question: 'What does "მადლობა" (Madloba) mean in English?',
-        options: ['Hello', 'Thank you', 'Goodbye', 'Please'],
-        correctAnswer: 1,
-        explanation: 'მადლობა (Madloba) means "Thank you" in Georgian.'
+        stem: 'როგორ ვთქვათ "გმარჯობა" ქართულად?',
+        options: [
+          { id: 'A', text: 'გამარჯობა' },
+          { id: 'B', text: 'ნახვამდის' },
+          { id: 'C', text: 'მადლობა' },
+          { id: 'D', text: 'გმარჯობთ' }
+        ],
+        answer: 'A'
       },
       {
         id: 5,
-        question: 'How many letters are in the Georgian alphabet?',
-        options: ['30', '33', '28', '35'],
-        correctAnswer: 1,
-        explanation: 'The Georgian alphabet has 33 letters.'
+        stem: 'რა ნიშნავს სიტყვა "მადლობა"?',
+        options: [
+          { id: 'A', text: 'გამარჯობა' },
+          { id: 'B', text: 'მადლობა' },
+          { id: 'C', text: 'ნახვამდის' },
+          { id: 'D', text: 'გმარჯობთ' }
+        ],
+        answer: 'B'
       },
       {
         id: 6,
-        question: 'What is the Georgian word for "water"?',
-        options: ['წყალი (Tskhali)', 'ხაჭაპური (Khachapuri)', 'ღვინო (Gvino)', 'პური (Puri)'],
-        correctAnswer: 0,
-        explanation: 'წყალი (Tskhali) means "water" in Georgian.'
+        stem: 'რა არის "წყალი" ქართულად?',
+        options: [
+          { id: 'A', text: 'წყალი' },
+          { id: 'B', text: 'ხაჭაპური' },
+          { id: 'C', text: 'ღვინო' },
+          { id: 'D', text: 'პური' }
+        ],
+        answer: 'A'
       },
       {
         id: 7,
-        question: 'What is the traditional Georgian bread called?',
-        options: ['Khachapuri', 'Shoti', 'Lavash', 'Pita'],
-        correctAnswer: 1,
-        explanation: 'Shoti is the traditional Georgian bread baked in a special oven called tone.'
+        stem: 'რა ეწოდება ტრადიციულ ქართულ პურს?',
+        options: [
+          { id: 'A', text: 'ხაჭაპური' },
+          { id: 'B', text: 'შოთი' },
+          { id: 'C', text: 'ლავაში' },
+          { id: 'D', text: 'პიტა' }
+        ],
+        answer: 'B'
       },
       {
         id: 8,
-        question: 'How do you say "I love you" in Georgian?',
-        options: ['მე შენ მიყვარხარ (Me shen miqvarxar)', 'გმარჯობთ (Gmarchobt)', 'ნახვამდის (Nakhvamdis)', 'მადლობა (Madloba)'],
-        correctAnswer: 0,
-        explanation: 'მე შენ მიყვარხარ (Me shen miqvarxar) means "I love you" in Georgian.'
+        stem: 'როგორ ვთქვათ "მე შენ მიყვარხარ" ქართულად?',
+        options: [
+          { id: 'A', text: 'მე შენ მიყვარხარ' },
+          { id: 'B', text: 'გმარჯობთ' },
+          { id: 'C', text: 'ნახვამდის' },
+          { id: 'D', text: 'მადლობა' }
+        ],
+        answer: 'A'
       },
       {
         id: 9,
-        question: 'What is the Georgian word for "friend"?',
-        options: ['მეგობარი (Megobari)', 'ძმა (Dzma)', 'დედა (Deda)', 'მამა (Mama)'],
-        correctAnswer: 0,
-        explanation: 'მეგობარი (Megobari) means "friend" in Georgian.'
+        stem: 'რა არის "მეგობარი" ქართულად?',
+        options: [
+          { id: 'A', text: 'მეგობარი' },
+          { id: 'B', text: 'ძმა' },
+          { id: 'C', text: 'დედა' },
+          { id: 'D', text: 'მამა' }
+        ],
+        answer: 'A'
       },
       {
         id: 10,
-        question: 'What does "საქართველო" (Sakartvelo) mean?',
-        options: ['Tbilisi', 'Georgia', 'Caucasus', 'Republic'],
-        correctAnswer: 1,
-        explanation: 'საქართველო (Sakartvelo) is the Georgian name for Georgia.'
+        stem: 'რა ნიშნავს "საქართველო"?',
+        options: [
+          { id: 'A', text: 'თბილისი' },
+          { id: 'B', text: 'საქართველო' },
+          { id: 'C', text: 'კავკასია' },
+          { id: 'D', text: 'რესპუბლიკა' }
+        ],
+        answer: 'B'
       }
     ]
   },
   {
     id: 'history',
-    name: 'Georgian History',
-    nameGeorgian: 'საქართველოს ისტორია',
+    title: 'საქართველოს ისტორია — მოქალაქეობის ტესტი',
+    titleEnglish: 'Georgian History — Citizenship Test',
     description: 'Learn about Georgia\'s rich historical heritage',
     questions: [
       {
         id: 1,
-        question: 'When did Georgia gain independence from the Soviet Union?',
-        options: ['1989', '1990', '1991', '1992'],
-        correctAnswer: 2,
-        explanation: 'Georgia declared independence from the Soviet Union on April 9, 1991.'
+        stem: 'საქართველოს ტერიტორიაზე სად აღმოაჩინეს ჰომო გეორგიკუსი?',
+        options: [
+          { id: 'A', text: 'შულავერში' },
+          { id: 'B', text: 'დმანისში' },
+          { id: 'C', text: 'თრიალეთში' },
+          { id: 'D', text: 'ბოლნისში' }
+        ],
+        answer: 'B'
       },
       {
         id: 2,
-        question: 'Who was the first President of independent Georgia?',
-        options: ['Eduard Shevardnadze', 'Zviad Gamsakhurdia', 'Mikheil Saakashvili', 'Giorgi Margvelashvili'],
-        correctAnswer: 1,
-        explanation: 'Zviad Gamsakhurdia was the first President of independent Georgia (1991-1992).'
+        stem: 'რამდენი წლისაა დმანისში აღმოჩენილი ნაშთები?', 
+        options: [
+          { id: 'A', text: '1.200 მილიონი წლის' },
+          { id: 'B', text: '1.800 მილიონი წლის' },
+          { id: 'C', text: '800 ათასი წლის' },
+          { id: 'D', text: '200 ათასი წლის' }
+        ],
+        answer: 'B'
       },
       {
         id: 3,
-        question: 'What year was the Georgian Orthodox Church established?',
-        options: ['337 AD', '387 AD', '451 AD', '527 AD'],
-        correctAnswer: 0,
-        explanation: 'The Georgian Orthodox Church was established in 337 AD.'
+        stem: 'რას აღნიშნავს ტერმინი „ნეოლითური რევოლუცია"?',
+        options: [
+          { id: 'A', text: 'მიწათმოქმედების დაწყებას' },
+          { id: 'B', text: 'ფეოდალური ურთიერთობების წარმოშობას' },
+          { id: 'C', text: 'ქვის იარაღების დახვეწას' },
+          { id: 'D', text: 'ბრინჯაოს დამუშავებას' }
+        ],
+        answer: 'A'
       },
       {
         id: 4,
-        question: 'What year did Georgia become a Christian country?',
-        options: ['337 AD', '387 AD', '451 AD', '527 AD'],
-        correctAnswer: 0,
-        explanation: 'Georgia officially adopted Christianity as the state religion in 337 AD.'
+        stem: 'რა ეწოდება ადრეულ ბრინჯაოს ხანის კულტურას?',
+        options: [
+          { id: 'A', text: 'კოლხური' },
+          { id: 'B', text: 'თრიალეთის' },
+          { id: 'C', text: 'შულავერის' },
+          { id: 'D', text: 'მტკვარ-არაქსის' }
+        ],
+        answer: 'D'
       },
       {
         id: 5,
-        question: 'Who was the first female ruler of Georgia?',
-        options: ['Queen Tamar', 'Queen Rusudan', 'Queen Ketevan', 'Queen Mariam'],
-        correctAnswer: 0,
-        explanation: 'Queen Tamar (1184-1213) was the first female ruler of Georgia and is considered one of its greatest monarchs.'
+        stem: 'რომელი ქალაქი იყო ქართლის სამეფოს დედაქალაქი?',
+        options: [
+          { id: 'A', text: 'უფლისციხე' },
+          { id: 'B', text: 'მცხეთა' },
+          { id: 'C', text: 'თბილისი' },
+          { id: 'D', text: 'დმანისი' }
+        ],
+        answer: 'B'
       },
       {
         id: 6,
-        question: 'What was the capital of Georgia during the Golden Age?',
-        options: ['Tbilisi', 'Kutaisi', 'Mtskheta', 'Telavi'],
-        correctAnswer: 0,
-        explanation: 'Tbilisi was the capital during Georgia\'s Golden Age under Queen Tamar.'
+        stem: 'რა წელს გახდა საქართველო ქრისტიანული ქვეყანა?',
+        options: [
+          { id: 'A', text: '337 წელი' },
+          { id: 'B', text: '387 წელი' },
+          { id: 'C', text: '451 წელი' },
+          { id: 'D', text: '527 წელი' }
+        ],
+        answer: 'A'
       },
       {
         id: 7,
-        question: 'When did Georgia become part of the Russian Empire?',
-        options: ['1801', '1810', '1829', '1830'],
-        correctAnswer: 0,
-        explanation: 'Georgia was annexed by the Russian Empire in 1801.'
+        stem: 'ვინ იყო საქართველოს პირველი ქალი მმართველი?',
+        options: [
+          { id: 'A', text: 'თამარ მეფე' },
+          { id: 'B', text: 'რუსუდან მეფე' },
+          { id: 'C', text: 'ქეთევან მეფე' },
+          { id: 'D', text: 'მარიამ მეფე' }
+        ],
+        answer: 'A'
       },
       {
         id: 8,
-        question: 'What year did Georgia declare independence from the Soviet Union?',
-        options: ['April 9, 1991', 'May 26, 1991', 'June 15, 1991', 'July 4, 1991'],
-        correctAnswer: 0,
-        explanation: 'Georgia declared independence from the Soviet Union on April 9, 1991.'
+        stem: 'რომელი ქალაქი იყო ოქროს ხანის დედაქალაქი?',
+        options: [
+          { id: 'A', text: 'თბილისი' },
+          { id: 'B', text: 'ქუთაისი' },
+          { id: 'C', text: 'მცხეთა' },
+          { id: 'D', text: 'თელავი' }
+        ],
+        answer: 'A'
       },
       {
         id: 9,
-        question: 'Who was the first democratically elected President of Georgia?',
-        options: ['Eduard Shevardnadze', 'Zviad Gamsakhurdia', 'Mikheil Saakashvili', 'Giorgi Margvelashvili'],
-        correctAnswer: 1,
-        explanation: 'Zviad Gamsakhurdia was the first democratically elected President of Georgia in 1991.'
+        stem: 'რა წელს გახდა საქართველო რუსეთის იმპერიის ნაწილი?',
+        options: [
+          { id: 'A', text: '1801' },
+          { id: 'B', text: '1810' },
+          { id: 'C', text: '1829' },
+          { id: 'D', text: '1830' }
+        ],
+        answer: 'A'
       },
       {
         id: 10,
-        question: 'What year did the Rose Revolution take place in Georgia?',
-        options: ['2001', '2002', '2003', '2004'],
-        correctAnswer: 2,
-        explanation: 'The Rose Revolution took place in November 2003, leading to the resignation of President Shevardnadze.'
+        stem: 'რა წელს გამოაცხადა საქართველომ დამოუკიდებლობა საბჭოთა კავშირისგან?',
+        options: [
+          { id: 'A', text: '1991 წლის 9 აპრილი' },
+          { id: 'B', text: '1991 წლის 26 მაისი' },
+          { id: 'C', text: '1991 წლის 15 ივნისი' },
+          { id: 'D', text: '1991 წლის 4 ივლისი' }
+        ],
+        answer: 'A'
       }
     ]
   },
   {
     id: 'law',
-    name: 'Georgian Law',
-    nameGeorgian: 'საქართველოს კანონმდებლობა',
+    title: 'საქართველოს კანონმდებლობა — მოქალაქეობის ტესტი',
+    titleEnglish: 'Georgian Law — Citizenship Test',
     description: 'Understand Georgia\'s legal system and constitution',
     questions: [
       {
         id: 1,
-        question: 'When was the current Constitution of Georgia adopted?',
-        options: ['1991', '1995', '2004', '2010'],
-        correctAnswer: 1,
-        explanation: 'The current Constitution of Georgia was adopted on August 24, 1995.'
+        stem: 'რა წელს მიღებულ იქნა საქართველოს მიმდინარე კონსტიტუცია?',
+        options: [
+          { id: 'A', text: '1991' },
+          { id: 'B', text: '1995' },
+          { id: 'C', text: '2004' },
+          { id: 'D', text: '2010' }
+        ],
+        answer: 'B'
       },
       {
         id: 2,
-        question: 'What is the minimum voting age in Georgia?',
-        options: ['16 years', '17 years', '18 years', '21 years'],
-        correctAnswer: 2,
-        explanation: 'The minimum voting age in Georgia is 18 years.'
+        stem: 'რა არის საქართველოში ხმის მიცემის მინიმალური ასაკი?',
+        options: [
+          { id: 'A', text: '16 წელი' },
+          { id: 'B', text: '17 წელი' },
+          { id: 'C', text: '18 წელი' },
+          { id: 'D', text: '21 წელი' }
+        ],
+        answer: 'C'
       },
       {
         id: 3,
-        question: 'How many members are in the Parliament of Georgia?',
-        options: ['100', '120', '150', '180'],
-        correctAnswer: 2,
-        explanation: 'The Parliament of Georgia has 150 members.'
+        stem: 'რამდენი წევრია საქართველოს პარლამენტში?',
+        options: [
+          { id: 'A', text: '100' },
+          { id: 'B', text: '120' },
+          { id: 'C', text: '150' },
+          { id: 'D', text: '180' }
+        ],
+        answer: 'C'
       },
       {
         id: 4,
-        question: 'What is the official language of Georgia?',
-        options: ['Georgian', 'Russian', 'English', 'Georgian and Russian'],
-        correctAnswer: 0,
-        explanation: 'Georgian is the official language of Georgia according to the Constitution.'
+        stem: 'რა არის საქართველოს ოფიციალური ენა?',
+        options: [
+          { id: 'A', text: 'ქართული' },
+          { id: 'B', text: 'რუსული' },
+          { id: 'C', text: 'ინგლისური' },
+          { id: 'D', text: 'ქართული და რუსული' }
+        ],
+        answer: 'A'
       },
       {
         id: 5,
-        question: 'What is the legal drinking age in Georgia?',
-        options: ['16 years', '17 years', '18 years', '21 years'],
-        correctAnswer: 2,
-        explanation: 'The legal drinking age in Georgia is 18 years.'
+        stem: 'რა არის საქართველოში ალკოჰოლის მოხმარების ლეგალური ასაკი?',
+        options: [
+          { id: 'A', text: '16 წელი' },
+          { id: 'B', text: '17 წელი' },
+          { id: 'C', text: '18 წელი' },
+          { id: 'D', text: '21 წელი' }
+        ],
+        answer: 'C'
       },
       {
         id: 6,
-        question: 'What is the driving age in Georgia?',
-        options: ['16 years', '17 years', '18 years', '21 years'],
-        correctAnswer: 2,
-        explanation: 'The minimum driving age in Georgia is 18 years.'
+        stem: 'რა არის საქართველოში მართვის ასაკი?',
+        options: [
+          { id: 'A', text: '16 წელი' },
+          { id: 'B', text: '17 წელი' },
+          { id: 'C', text: '18 წელი' },
+          { id: 'D', text: '21 წელი' }
+        ],
+        answer: 'C'
       },
       {
         id: 7,
-        question: 'What is the currency of Georgia?',
-        options: ['Georgian Lari', 'Georgian Ruble', 'Georgian Dollar', 'Georgian Euro'],
-        correctAnswer: 0,
-        explanation: 'The official currency of Georgia is the Georgian Lari (GEL).'
+        stem: 'რა არის საქართველოს ვალუტა?',
+        options: [
+          { id: 'A', text: 'ქართული ლარი' },
+          { id: 'B', text: 'ქართული რუბლი' },
+          { id: 'C', text: 'ქართული დოლარი' },
+          { id: 'D', text: 'ქართული ევრო' }
+        ],
+        answer: 'A'
       },
       {
         id: 8,
-        question: 'What is the national flag of Georgia called?',
-        options: ['Five Cross Flag', 'Rose Flag', 'Lion Flag', 'Eagle Flag'],
-        correctAnswer: 0,
-        explanation: 'The national flag of Georgia is called the Five Cross Flag, featuring five red crosses on a white background.'
+        stem: 'რა ეწოდება საქართველოს ეროვნულ დროშას?',
+        options: [
+          { id: 'A', text: 'ხუთჯვრიანი დროშა' },
+          { id: 'B', text: 'ვარდის დროშა' },
+          { id: 'C', text: 'ლომის დროშა' },
+          { id: 'D', text: 'არწივის დროშა' }
+        ],
+        answer: 'A'
       },
       {
         id: 9,
-        question: 'What is the national anthem of Georgia called?',
-        options: ['Tavisupleba', 'Dideba', 'Sakartvelo', 'Mamuli'],
-        correctAnswer: 0,
-        explanation: 'The national anthem of Georgia is called "Tavisupleba" (Freedom).'
+        stem: 'რა ეწოდება საქართველოს ეროვნულ ჰიმნს?',
+        options: [
+          { id: 'A', text: 'თავისუფლება' },
+          { id: 'B', text: 'დიდება' },
+          { id: 'C', text: 'საქართველო' },
+          { id: 'D', text: 'მამული' }
+        ],
+        answer: 'A'
       },
       {
         id: 10,
-        question: 'What is the capital city of Georgia?',
-        options: ['Tbilisi', 'Batumi', 'Kutaisi', 'Rustavi'],
-        correctAnswer: 0,
-        explanation: 'Tbilisi is the capital and largest city of Georgia.'
+        stem: 'რომელი ქალაქი არის საქართველოს დედაქალაქი?',
+        options: [
+          { id: 'A', text: 'თბილისი' },
+          { id: 'B', text: 'ბათუმი' },
+          { id: 'C', text: 'ქუთაისი' },
+          { id: 'D', text: 'რუსთავი' }
+        ],
+        answer: 'A'
       }
     ]
   }
@@ -259,10 +383,10 @@ export const getRandomQuestions = (categoryId: string, count = 10): Question[] =
   return shuffled.slice(0, count);
 };
 
-export const calculateScore = (answers: number[], questions: Question[]) => {
+export const calculateScore = (answers: string[], questions: Question[]) => {
   let correct = 0;
   answers.forEach((answer, index) => {
-    if (answer === questions[index].correctAnswer) {
+    if (answer === questions[index].answer) {
       correct++;
     }
   });

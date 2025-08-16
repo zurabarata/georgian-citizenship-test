@@ -40,7 +40,7 @@ export const Study = () => {
   const history = useHistory();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [totalAnswered, setTotalAnswered] = useState(0);
@@ -64,11 +64,11 @@ export const Study = () => {
 
   const category = testCategories.find(cat => cat.id === categoryId);
 
-  const handleAnswerSelect = (answerIndex: number) => {
-    setSelectedAnswer(answerIndex);
+  const handleAnswerSelect = (answerId: string) => {
+    setSelectedAnswer(answerId);
     setShowAnswer(true);
     
-    const newCorrectAnswers = answerIndex === currentQuestion.correctAnswer ? correctAnswers + 1 : correctAnswers;
+    const newCorrectAnswers = answerId === currentQuestion.answer ? correctAnswers + 1 : correctAnswers;
     const newTotalAnswered = totalAnswered + 1;
     
     setCorrectAnswers(newCorrectAnswers);
@@ -134,7 +134,7 @@ export const Study = () => {
           <IonButtons slot="start">
             <IonBackButton defaultHref="/" />
           </IonButtons>
-          <IonTitle>Study Mode - {category.name}</IonTitle>
+          <IonTitle>Study Mode - {category.titleEnglish}</IonTitle>
         </IonToolbar>
         <IonToolbar>
           <IonProgressBar value={progress} />
@@ -158,9 +158,9 @@ export const Study = () => {
         <div style={{ padding: '16px' }}>
           <IonCard>
             <IonCardHeader>
-              <IonCardTitle>
-                {currentQuestion.question}
-              </IonCardTitle>
+                          <IonCardTitle>
+              {currentQuestion.stem}
+            </IonCardTitle>
             </IonCardHeader>
             <IonCardContent>
               <IonRadioGroup 
@@ -168,8 +168,8 @@ export const Study = () => {
                 onIonChange={e => handleAnswerSelect(e.detail.value)}
               >
                 {currentQuestion.options.map((option, index) => {
-                  const isSelected = selectedAnswer === index;
-                  const isCorrect = index === currentQuestion.correctAnswer;
+                  const isSelected = selectedAnswer === option.id;
+                  const isCorrect = option.id === currentQuestion.answer;
                   let itemColor = '';
                   
                   if (showAnswer) {
@@ -186,8 +186,8 @@ export const Study = () => {
                       lines="full"
                       color={itemColor}
                     >
-                      <IonRadio value={index} slot="start" />
-                      <IonLabel>{option}</IonLabel>
+                                          <IonRadio value={option.id} slot="start" />
+                    <IonLabel>{option.text}</IonLabel>
                       {showAnswer && isCorrect && (
                         <IonIcon 
                           icon={checkmarkCircleOutline} 
@@ -220,18 +220,7 @@ export const Study = () => {
                 </div>
               )}
 
-              {showAnswer && currentQuestion.explanation && (
-                <div style={{ 
-                  backgroundColor: 'var(--ion-color-light)',
-                  padding: '12px',
-                  borderRadius: '8px',
-                  marginTop: '16px'
-                }}>
-                  <IonText color="medium">
-                    <strong>Explanation:</strong> {currentQuestion.explanation}
-                  </IonText>
-                </div>
-              )}
+
             </IonCardContent>
           </IonCard>
 

@@ -102,10 +102,10 @@ export const Home = () => {
                         />
                       </div>
                       <IonCardTitle style={{ textAlign: 'center' }}>
-                        {category.name}
+                        {category.titleEnglish}
                       </IonCardTitle>
                       <IonCardSubtitle style={{ textAlign: 'center', marginTop: '8px' }}>
-                        {category.nameGeorgian}
+                        {category.title}
                       </IonCardSubtitle>
                     </IonCardHeader>
                     <IonCardContent>
@@ -159,7 +159,7 @@ export const Home = () => {
                       backgroundColor: 'var(--ion-color-light)',
                       borderRadius: '8px'
                     }}>
-                      <IonText>{category?.name}</IonText>
+                      <IonText>{category?.titleEnglish}</IonText>
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <IonButton 
                           size="small"

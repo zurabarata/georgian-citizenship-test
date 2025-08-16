@@ -1,7 +1,7 @@
 export interface TestProgress {
   categoryId: string;
   currentQuestionIndex: number;
-  answers: number[];
+  answers: string[];
   startTime: number;
   completed: boolean;
 }
@@ -11,7 +11,7 @@ export interface TestResult {
   score: number;
   totalQuestions: number;
   passed: boolean;
-  answers: number[];
+  answers: string[];
   completedAt: number;
 }
 
@@ -38,7 +38,7 @@ class ProgressManager {
 
   // Test Progress Management
   saveTestProgress(progress: TestProgress): void {
-    const allProgress = this.getTestProgress();
+    const allProgress = this.getTestProgress() as Record<string, TestProgress>;
     allProgress[progress.categoryId] = progress;
     localStorage.setItem(this.PROGRESS_KEY, JSON.stringify(allProgress));
   }
@@ -47,13 +47,13 @@ class ProgressManager {
     const stored = localStorage.getItem(this.PROGRESS_KEY);
     if (!stored) return categoryId ? null : {};
     
-    const allProgress = JSON.parse(stored);
+    const allProgress: Record<string, TestProgress> = JSON.parse(stored);
     return categoryId ? allProgress[categoryId] || null : allProgress;
   }
 
   clearTestProgress(categoryId?: string): void {
     if (categoryId) {
-      const allProgress = this.getTestProgress();
+      const allProgress = this.getTestProgress() as Record<string, TestProgress>;
       delete allProgress[categoryId];
       localStorage.setItem(this.PROGRESS_KEY, JSON.stringify(allProgress));
     } else {
@@ -63,7 +63,7 @@ class ProgressManager {
 
   // Test Results Management
   saveTestResult(result: TestResult): void {
-    const allResults = this.getTestResults();
+    const allResults = this.getTestResults() as Record<string, TestResult>;
     allResults[result.categoryId] = result;
     localStorage.setItem(this.RESULTS_KEY, JSON.stringify(allResults));
     
@@ -75,13 +75,13 @@ class ProgressManager {
     const stored = localStorage.getItem(this.RESULTS_KEY);
     if (!stored) return categoryId ? null : {};
     
-    const allResults = JSON.parse(stored);
+    const allResults: Record<string, TestResult> = JSON.parse(stored);
     return categoryId ? allResults[categoryId] || null : allResults;
   }
 
   // Study Progress Management
   saveStudyProgress(progress: StudyProgress): void {
-    const allProgress = this.getStudyProgress();
+    const allProgress = this.getStudyProgress() as Record<string, StudyProgress>;
     allProgress[progress.categoryId] = progress;
     localStorage.setItem(this.STUDY_KEY, JSON.stringify(allProgress));
   }
@@ -90,7 +90,7 @@ class ProgressManager {
     const stored = localStorage.getItem(this.STUDY_KEY);
     if (!stored) return categoryId ? null : {};
     
-    const allProgress = JSON.parse(stored);
+    const allProgress: Record<string, StudyProgress> = JSON.parse(stored);
     return categoryId ? allProgress[categoryId] || null : allProgress;
   }
 
