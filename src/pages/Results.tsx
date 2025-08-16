@@ -30,6 +30,7 @@ import {
 } from 'ionicons/icons';
 import { useLocation, useHistory } from 'react-router';
 import { testCategories, type Question } from '../data/questions';
+import { progressManager } from '../utils/progressManager';
 
 interface ResultsData {
   categoryId: string;
@@ -47,12 +48,8 @@ export const Results = () => {
 
   // If no results data, redirect to home
   if (!location.state) {
-    try {
-      history.push('/');
-    } catch (error) {
-      console.error('Redirect error:', error);
-      window.location.href = '/';
-    }
+    console.log('No results data found, redirecting to home');
+    window.location.href = '/';
     return null;
   }
 
@@ -61,16 +58,27 @@ export const Results = () => {
   const percentage = Math.round((score / totalQuestions) * 100);
 
   const handleRetakeTest = () => {
-    history.push(`/test/${categoryId}`);
+    console.log('Retake test clicked for category:', categoryId);
+    try {
+      // Clear any existing progress for this category
+      progressManager.clearTestProgress(categoryId);
+      // Navigate to test
+      window.location.href = `/test/${categoryId}`;
+    } catch (error) {
+      console.error('Navigation error:', error);
+      window.location.href = `/test/${categoryId}`;
+    }
   };
 
   const handleGoHome = () => {
-    console.log('Back to Home button clicked'); // Debug log
+    console.log('Back to Home button clicked');
     try {
-      history.push('/');
+      // Clear any incomplete test progress
+      progressManager.clearTestProgress();
+      // Navigate to home
+      window.location.href = '/';
     } catch (error) {
       console.error('Navigation error:', error);
-      // Fallback: try to navigate using window.location
       window.location.href = '/';
     }
   };
