@@ -22,7 +22,7 @@ export const testCategories: TestCategory[] = [
   {
     id: 'georgian',
     title: 'ქართული ენა — მოქალაქეობის ტესტი',
-    titleEnglish: 'Georgian Language — Citizenship Test',
+    titleEnglish: 'Georgian Language',
     description: 'Test your knowledge of Georgian language and grammar',
     questions: [
       {
