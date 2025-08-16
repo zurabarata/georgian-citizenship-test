@@ -1,0 +1,8 @@
+{
+  "name": "HappyTaskers Club",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite",
+  "id": "a3c53cc9"
+}
