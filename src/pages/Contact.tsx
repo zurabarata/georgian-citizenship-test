@@ -11,7 +11,7 @@ const contactContent = (
   >
     <br />
     <text>drop us an email at:</text>
-    <text>info@happytaskers.club</text>
+    <text>info@georgiancitizenship.test</text>
     <br />
     <text>we will get back to you asap!</text>
   </div>

@@ -1,36 +1,34 @@
 import { GenericPage } from '../components/GenericPage';
-import { IonImg } from '@ionic/react';
-import zurabImage from './assets/happy taskers club - zurab baratashvili - HappyTaskers LLC.png';
 
 const mainContent = (
   <div
     style={{
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center', // Centers children horizontally in the container
-      textAlign: 'center', // Centers the text elements
+      alignItems: 'center',
+      textAlign: 'center',
     }}
   >
-    <IonImg
-      style={{
-        borderRadius: '120px',
-        height: '40%',
-        width: '40%',
-        objectFit: 'cover', // Ensures the aspect ratio is maintained
-      }}
-      src={zurabImage}
-      alt="Zurab Baratashvili, HappyTaskers LLC"
-    />
-    Welcome to Happy Taskers Club, where tech transforms financial
-    possibilities!
+    <h2>🇬🇪 Georgian Citizenship Test</h2>
+    <p>
+      Welcome to your comprehensive preparation tool for the Georgian citizenship test!
+    </p>
     <br />
+    <p>
+      📚 Practice with 200+ questions across three categories:
+    </p>
+    <ul style={{ textAlign: 'left', margin: '20px 0' }}>
+      <li>🇬🇪 Georgian Language</li>
+      <li>📖 Georgian History</li>
+      <li>⚖️ Georgian Law</li>
+    </ul>
+    <p>
+      Each test consists of 10 questions, and you need to answer at least 7 correctly to pass.
+    </p>
     <br />
-    📍Based in Tbilisi, Georgia, we blend expertise and creativity to transform
-    complex financial algorithms into user-friendly solutions.
-    <br />
-    <br />
-    At Happy Taskers club, we shift fintech from fin to tech with a twist of
-    innovation, catering to various markets and needs.
+    <p>
+      🎯 Start practicing today and prepare for your citizenship journey!
+    </p>
   </div>
 );
 

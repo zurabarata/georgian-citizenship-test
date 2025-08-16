@@ -140,7 +140,7 @@ export const testCategories: TestCategory[] = [
   {
     "id": "history",
     "title": "საქართველოს ისტორია — მოქალაქეობის ტესტი",
-    "titleEnglish": "Georgian History — Citizenship Test",
+    "titleEnglish": "Georgian History",
     "description": "Learn about Georgia's rich historical heritage",
     "questions": [
       {
@@ -4748,7 +4748,7 @@ export const testCategories: TestCategory[] = [
   {
     id: 'law',
     title: 'საქართველოს კანონმდებლობა — მოქალაქეობის ტესტი',
-    titleEnglish: 'Georgian Law — Citizenship Test',
+    titleEnglish: 'Georgian Law',
     description: 'Understand Georgia\'s legal system and constitution',
     questions: [
       {

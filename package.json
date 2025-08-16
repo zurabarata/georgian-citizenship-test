@@ -1,5 +1,5 @@
 {
-  "name": "happy-taskers-club",
+  "name": "georgian-citizenship-test",
   "private": true,
   "version": "0.0.1",
   "type": "module",
@@ -51,5 +51,5 @@
     "vite": "^5.0.0",
     "vitest": "^0.34.6"
   },
-  "description": "HAPPY TASKERS CLUB"
+  "description": "Georgian Citizenship Test App"
 }
